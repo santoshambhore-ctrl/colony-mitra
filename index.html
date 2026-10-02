@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<title>Colony Mitra</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css?v16">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="firebase-config.js?v16"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img class="logo" id="appLogo" src="icons/icon-192.png" alt="logo">
+    <div>
+      <h1>Colony Mitra</h1>
+      <span id="areaName">📍 Govt Colony, Ghatkopar East</span>
+    </div>
+    <span class="sync" id="syncBadge" title="Data kahan save ho raha hai">📱 Local</span>
+  </div>
+  <a class="icon-btn" href="./downloads.html" title="फाइल्स डाउनलोड" style="text-decoration:none;display:flex;align-items:center;justify-content:center;font-size:16px">📥</a>
+  <button class="icon-btn" id="themeBtn" aria-label="Theme">🌙</button>
+</header>
+
+<!-- ================= INSTALL BANNER ================= -->
+<div id="installBar" class="installbar">
+  <span class="il-ic">📲</span>
+  <div class="il-txt">
+    <b id="ilTitle">App ko phone me install karo</b>
+    <span id="ilSub">Ek tap me — bilkul app jaisa khulega</span>
+  </div>
+  <button class="il-btn" id="ilBtn">Install</button>
+  <button class="il-x" id="ilClose" aria-label="band">✕</button>
+</div>
+
+<nav class="tabs" role="tablist">
+  <button class="tab active" data-tab="home">🏠 Business</button>
+  <button class="tab" data-tab="em">🚨 Emergency</button>
+  <button class="tab" data-tab="updates">📢 Updates</button>
+  <button class="tab" data-tab="admin">⚙️ Admin</button>
+</nav>
+
+<!-- ================= HOME ================= -->
+<main id="page-home" class="page active">
+  <div class="search-wrap">
+    <input type="search" id="search" placeholder="🔍 Business ya kaam dhundho…" autocomplete="off">
+  </div>
+  <div class="chips" id="catChips"></div>
+  <div class="listhead"><span id="shopCount">0 Business</span></div>
+  <div id="shopList" class="grid"></div>
+  <p class="empty" id="homeEmpty">Abhi koi business nahi. Admin tab se pehla business add karo.</p>
+
+  <a class="dlbar" href="./downloads.html">
+    <span>📥</span>
+    <div><b>फाइल्स डाउनलोड करा</b><i>मराठी माहिती, फॉर्म, मार्गदर्शक</i></div>
+    <span class="dlbar-go">›</span>
+  </a>
+</main>
+
+<!-- ================= EMERGENCY ================= -->
+<main id="page-em" class="page">
+  <div class="sos-banner">
+    <span>🚨</span>
+    <div>
+      <strong>Emergency?</strong>
+      <p>Neeche kisi bhi number pe tap karo — turant call ho jayega.</p>
+    </div>
+  </div>
+  <div id="emList" class="em-grid"></div>
+  <p class="empty" id="emEmpty" style="display:none">Koi number nahi. Admin se add karo.</p>
+  <p class="disclaimer">⚠️ Yeh list aapke colony ke liye hai. Koi bhi business ya number change kar sakta hai — galat number na ho, check kar lein.</p>
+</main>
+
+<!-- ================= UPDATES ================= -->
+<main id="page-updates" class="page">
+  <div id="updateList" class="feed"></div>
+  <p class="empty" id="updatesEmpty">Koi update nahi abhi.</p>
+</main>
+
+<!-- ================= ADMIN ================= -->
+<main id="page-admin" class="page">
+  <div id="pinGate" class="card gate">
+    <h2>🔒 Admin Login</h2>
+    <p class="muted">Sirf aapke liye. Email aur password daalein.</p>
+    <input type="email" id="adminEmail" placeholder="admin email" autocomplete="username" inputmode="email">
+    <input type="password" id="adminPass" placeholder="password" autocomplete="current-password" style="margin-top:10px">
+    <button class="btn primary" id="pinBtn" style="margin-top:12px">🔓 Login</button>
+    <p class="err" id="pinErr"></p>
+    <p id="adminOut" style="font-size:11.5px;color:var(--muted);margin-top:6px"></p>
+  </div>
+
+  <div id="adminPanel" style="display:none">
+    <div class="card">
+      <h2>📊 Kitne Log Use Kar Rahe Hain</h2>
+      <p class="muted">Phone kholne wale logon ka count. Koi naam ya number nahi jode jaata.</p>
+      <div id="statBox"><div class="hintbox">Load ho raha hai…</div></div>
+    </div>
+
+    <div class="card">
+      <h2>🖼️ App Logo</h2>
+      <p class="muted">Apni colony society ya business ki logo yahan dal do. Har phone pe dikhegi.</p>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+        <img id="logoPreview" src="icons/icon-192.png" alt="" style="width:64px;height:64px;border-radius:14px;object-fit:cover;background:#fff;box-shadow:var(--shadow)">
+        <div style="flex:1;min-width:0">
+          <input type="file" id="logoFile" accept="image/*">
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn" id="logoSave">💾 Logo badlo</button>
+        <button class="btn ghost" id="logoReset">↩️ Default</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 id="adminTitle">➕ Naya Business</h2>
+      <form id="shopForm">
+        <input type="hidden" id="fId">
+        <label>Business ka naam *</label>
+        <input id="fName" required placeholder="e.g. Sharma General Store">
+
+        <label>Category</label>
+        <input id="fCategory" placeholder="e.g. Kirana, Salon, Clinic, Tailor">
+
+        <label>Business Code / No. (optional)</label>
+        <input id="fCode" placeholder="Khali chhodne se apne aap: GC-001, GC-002..." maxlength="12">
+        <div class="hint">Business ka reference number — jaise GC-042</div>
+
+        <label>Mobile number *</label>
+        <input id="fPhone" type="tel" required inputmode="numeric" placeholder="98765 43210">
+
+        <label>WhatsApp number (agar alag hai)</label>
+        <input id="fWa" type="tel" inputmode="numeric" placeholder="khali chhodne se mobile hi use hoga">
+
+        <label>Address / Shop no.</label>
+        <input id="fAddr" placeholder="e.g. Block C, H.No. 42">
+
+        <label>Opening - closing time</label>
+        <input id="fTime" placeholder="e.g. 9:00 AM - 10:00 PM">
+
+        <label>Kya karta hai? (details)</label>
+        <textarea id="fDesc" rows="3" placeholder="Sabzi, Fruit, Doodh, Biscuit sab milta hai"></textarea>
+
+        <label>Saman aur daam</label>
+        <div class="hint">Format: <code>Category | Item | Price</code> — ek line mein</div>
+        <textarea id="fItems" rows="6" placeholder="Sabzi | Aloo | 30/kg&#10;Sabzi | Pyaaz | 25/kg&#10;Kirana | Atta 5kg | 280"></textarea>
+
+        <label>Business ki photos</label>
+        <input type="file" id="fPhotos" accept="image/*" multiple>
+        <div id="photoPreview" class="thumbs"></div>
+
+        <label class="check"><input type="checkbox" id="fNew"> 🆕 Naya business shuru hua</label>
+        <label class="check"><input type="checkbox" id="fOpen"> 🟢 Abhi khuli hai</label>
+
+        <div class="row">
+          <button type="submit" class="btn primary">💾 Save</button>
+          <button type="button" class="btn ghost" id="cancelEdit">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>📢 Naya Update daalo</h2>
+      <form id="updateForm">
+        <label>Message</label>
+        <textarea id="uText" rows="3" placeholder="Sharma Store par aaj 20% off hai!" required></textarea>
+        <label>Type</label>
+        <select id="uType">
+          <option value="offer">🎁 Offer</option>
+          <option value="new">🆕 Naya Business</option>
+          <option value="notice">📌 Notice</option>
+        </select>
+        <label>Photo (optional)</label>
+        <input type="file" id="uPhoto" accept="image/*">
+        <button type="submit" class="btn primary">Post karo</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>🚨 Emergency Numbers</h2>
+      <p class="muted">Colony ke emergency contacts. Log ek tap me call kar sakte hain.</p>
+      <form id="emForm">
+        <div class="row2">
+          <div>
+            <label>Icon (emoji)</label>
+            <input id="emIcon" placeholder="🚨" maxlength="4">
+          </div>
+          <div>
+            <label>Label</label>
+            <input id="emLabel" required placeholder="Police">
+          </div>
+        </div>
+        <label>Number</label>
+        <input id="emNum" required type="tel" inputmode="numeric" placeholder="100 ya 98765 43210">
+        <label>Colour (red / blue / green / orange)</label>
+        <select id="emColor">
+          <option value="red">🔴 Red — emergency</option>
+          <option value="blue">🔵 Blue — police / security</option>
+          <option value="green">🟢 Green — medical</option>
+          <option value="orange">🟠 Orange — colony / utility</option>
+        </select>
+        <div class="row">
+          <button type="submit" class="btn primary">➕ Add number</button>
+          <button type="button" class="btn ghost" id="emReset">↩️ Default list</button>
+        </div>
+      </form>
+      <div id="emAdminList" class="em-admin"></div>
+    </div>
+
+    <div class="card">
+      <h2>📤 Backup / Restore</h2>
+      <p class="muted">Phone badalne par ye zaroor le lo.</p>
+      <div class="row">
+        <button class="btn" id="exportBtn">⬇️ Backup lo</button>
+        <label class="btn">⬆️ Restore<input type="file" id="importFile" accept="application/json" hidden></label>
+        <button class="btn danger" id="wipeBtn">🗑️ Sab mitao</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔐 Password badlo</h2>
+      <input id="newPin" type="password" placeholder="Naya password (min 6 characters)" autocomplete="new-password">
+      <button class="btn" id="changePin">Save password</button>
+      <div class="row"><button class="btn danger" id="logoutBtn">🔒 Logout</button></div>
+    </div>
+  </div>
+</main>
+
+<!-- ================= SHOP DETAIL ================= -->
+<div id="shopModal" class="modal">
+  <div class="modal-inner">
+    <button class="close" id="closeShop">✕</button>
+    <div id="shopBody"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="app.js?v16"></script>
+</body>
+</html>

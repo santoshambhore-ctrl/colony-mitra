@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<title>Colony Mitra — Downloads</title>
+<link rel="stylesheet" href="style.css?v16">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img class="logo" src="icons/icon-192.png" alt="">
+    <div>
+      <h1>Colony Mitra</h1>
+      <span id="areaName">📍 Govt Colony, Ghatkopar East</span>
+    </div>
+  </div>
+  <a class="icon-btn" href="./index.html" title="App वर जा" style="text-decoration:none;display:flex;align-items:center;justify-content:center">🏠</a>
+</header>
+
+<main class="page active">
+  <div class="sos-banner" style="border-left-color:var(--pri);background:#f0f9f5">
+    <span>📥</span>
+    <div>
+      <strong>फाइल्स डाउनलोड करा</strong>
+      <p>प्रत्येक फाइलसमोर दोन बटण — "बघा" आणि "डाउनलोड".</p>
+    </div>
+  </div>
+
+  <div class="dl-grid" id="dlGrid"></div>
+
+  <div class="note" style="background:#f0f9f5;border-left:4px solid #0f766e;border-radius:7px;padding:10px 14px;margin:12px 0;font-size:10.5pt">
+    <b>डाउनलोड न झाल्यास:</b>
+    <br>• फाइलवर <b>उशी दाबून</b> (long press) करा → "Download" / "फाइल जतन करा" वर tap करा.<br>
+    • किंवा <b>बघा</b> वर tap करून PDF उघडा → तिथे ⋮ मेनू → Download वर tap करा.
+  </div>
+
+  <p class="disclaimer">ℹ️ सगळ्या फाइल्स मोफत आहेत. WhatsApp वर पाठवता येतात.</p>
+</main>
+
+<script>
+const FILES = [
+  { n:"Colony-Mitra-Marathi.pdf",
+    t:"मराठी माहिती पत्रिका",
+    d:"कॉलनीसाठी मराठीत सर्व माहिती — २ पाने",
+    tag:"मुख्य" },
+  { n:"Business-Registration-Form.pdf",
+    t:"व्यवसाय नोंदणी फॉर्म",
+    d:"दुकानदारांना देण्यासाठी एक पान — छापून द्या",
+    tag:"फॉर्म" }
+];
+
+function toast(msg) {
+  let t = document.getElementById("dlToast");
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "dlToast";
+    t.style.cssText = "position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);background:#1c1c1e;color:#fff;padding:12px 20px;border-radius:99px;font-size:13px;font-weight:600;z-index:200;transition:transform .25s;opacity:0;max-width:90vw;text-align:center";
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.transform = "translateX(-50%)";
+  t.style.opacity = "1";
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.style.transform = "translateX(-50%) translateY(90px)"; t.style.opacity = "0"; }, 2600);
+}
+
+async function download(name) {
+  toast("डाउनलोड सुरू होत आहे…");
+  try {
+    const res = await fetch("./" + name);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 1500);
+    toast("✅ " + name + " डाउनलोड झाले");
+  } catch (e) {
+    window.open("./" + name, "_blank", "noopener");
+    toast("नवीन टॅबमध्ये उघडले — तिथे ⋮ → Download");
+  }
+}
+
+document.getElementById("dlGrid").innerHTML = FILES.map(function(f, i) {
+  return '<div class="dl">'
+    + '<div class="dl-ic">📄</div>'
+    + '<div class="dl-body">'
+      + '<span class="dl-tag">' + f.tag + '</span>'
+      + '<b>' + f.t + '</b>'
+      + '<span class="dl-d">' + f.d + '</span>'
+    + '</div>'
+    + '<div class="dl-btns">'
+      + '<a class="dbtn view" href="./' + f.n + '" target="_blank" rel="noopener">बघा</a>'
+      + '<button class="dbtn get" data-dl="' + i + '">⬇ डाउनलोड</button>'
+    + '</div>'
+  + '</div>';
+}).join("");
+
+document.getElementById("dlGrid").addEventListener("click", function(e) {
+  const b = e.target.closest("[data-dl]");
+  if (!b) return;
+  download(FILES[+b.getAttribute("data-dl")].n);
+});
+</script>
+</body>
+</html>

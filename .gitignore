@@ -1,0 +1,38 @@
+# ---- temp / junk ----
+_*.html
+_*.png
+_*.js
+*-2x.png
+*.tmp
+*.bak
+
+# ---- node ----
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ---- firebase ----
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+database-debug.log*
+ui-debug.log*
+pubsub-debug.log*
+
+# ---- env / secrets (safety) ----
+.env
+.env.*
+*.local
+service-account*.json
+*-firebase-adminsdk-*.json
+**/private/**
+
+# ---- os ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- editors ----
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<title>Colony Mitra — Business Registration Form</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: "Nirmala UI", "Nirmala UI Semilight", "Kohinoor Devanagari", "Mangal", sans-serif;
+    color: #1c1c1e; margin: 0; font-size: 10pt; line-height: 1.4;
+    width: 210mm; min-height: 297mm; padding: 9mm 10mm;
+    background: #fff;
+  }
+  .hero {
+    background: linear-gradient(135deg, #0f766e, #14b8a6);
+    color: #fff; padding: 11px 15px; border-radius: 11px; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 13px;
+  }
+  .hero img { width: 46px; height: 46px; border-radius: 12px; background: #fff; flex-shrink: 0; }
+  .hero h1 { margin: 0; color: #fff; font-size: 16pt; line-height: 1.15; }
+  .hero .s { font-size: 9.5pt; opacity: .95; margin-top: 2px; }
+  .hero .url {
+    display: inline-block; background: rgba(255,255,255,.22); padding: 4px 12px;
+    border-radius: 7px; font-weight: bold; font-size: 10pt; margin-top: 4px;
+  }
+  .sec {
+    border: 1.4px solid #0f766e; border-radius: 9px; padding: 9px 12px;
+    margin-bottom: 7px; break-inside: avoid;
+  }
+  .sec > h2 {
+    margin: -9px -12px 7px; padding: 5px 12px; background: #0f766e; color: #fff;
+    font-size: 10.5pt; border-radius: 6px 6px 0 0;
+  }
+  .row { display: flex; gap: 11px; margin-bottom: 6px; }
+  .row:last-child { margin-bottom: 0; }
+  .f { flex: 1; min-width: 0; }
+  .lbl { display: block; font-size: 9pt; font-weight: 700; color: #0f766e; margin-bottom: 2px; }
+  .blank { border-bottom: 1.4px solid #6b7280; height: 21px; display: block; }
+  .checks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px 9px; margin-top: 4px; }
+  .checks div { font-size: 9.4pt; display: flex; align-items: center; gap: 5px; }
+  .cb { width: 12px; height: 12px; border: 1.3px solid #374151; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+
+  table.items { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  table.items th {
+    background: #ecfdf5; color: #0f766e; font-size: 9pt; text-align: left;
+    padding: 4px 7px; border: 1.1px solid #9ca3af; font-weight: 700;
+  }
+  table.items td { border: 1.1px solid #9ca3af; height: 21px; padding: 0 6px; font-size: 9.6pt; vertical-align: middle; }
+  table.items td.n { width: 26px; text-align: center; background: #f9fafb; color: #6b7280; font-size: 8.5pt; }
+  table.items td.c { width: 27%; }
+
+  .split { display: flex; gap: 11px; }
+  .photobox {
+    border: 1.3px dashed #6b7280; border-radius: 7px; flex: 1; min-height: 76px;
+    display: flex; align-items: center; justify-content: center;
+    color: #4b5563; font-size: 9.4pt; text-align: center; padding: 7px;
+  }
+  .sign { display: flex; gap: 18px; margin-top: 9px; }
+  .sign .s1 { flex: 1; border-top: 1.3px solid #6b7280; padding-top: 4px; font-size: 9pt; text-align: center; }
+  .foot { margin-top: 6px; font-size: 8.6pt; color: #4b5563; line-height: 1.45; border-top: 1px solid #d5d9de; padding-top: 6px; }
+  .foradmin {
+    background: #fffbeb; border: 1.1px solid #fde68a; border-left: 4px solid #f59e0b;
+    border-radius: 7px; padding: 7px 11px; font-size: 8.8pt; margin-bottom: 7px; line-height: 1.45;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img src="icons/icon-512.png" alt="">
+  <div>
+    <h1>Colony Mitra — Business Registration Form</h1>
+    <div class="s">सरकारी कॉलनी, घाटकोपर ईस्ट</div>
+    <div class="url">https://govt-colony.web.app</div>
+  </div>
+</div>
+
+<div class="sec">
+  <h2>1. Business की जानकारी</h2>
+  <div class="row">
+    <div class="f" style="flex:2"><label class="lbl">Business / दुकान का नाम *</label><span class="blank"></span></div>
+    <div class="f"><label class="lbl">Code (दिया हो तो)</label><span class="blank"></span></div>
+    <div class="f"><label class="lbl">कब से चल रहा है</label><span class="blank"></span></div>
+  </div>
+  <div class="row">
+    <div class="f" style="flex:2"><label class="lbl">पता / दुकान क्रमांक *</label><span class="blank"></span></div>
+    <div class="f"><label class="lbl">खुलने का समय</label><span class="blank"></span></div>
+    <div class="f"><label class="lbl">बंद होने का समय</label><span class="blank"></span></div>
+  </div>
+  <label class="lbl">Type — इनमें से tick करें *</label>
+  <div class="checks">
+    <div><span class="cb"></span> किराना / सब्ज़ी</div>
+    <div><span class="cb"></span> डेयरी / दूध</div>
+    <div><span class="cb"></span> बेकरी</div>
+    <div><span class="cb"></span> कपड़े / स्टोर्स</div>
+    <div><span class="cb"></span> सलून / ब्यूटी</div>
+    <div><span class="cb"></span> हेयर / मेहंदी</div>
+    <div><span class="cb"></span> डॉक्टर / क्लिनिक</div>
+    <div><span class="cb"></span> दवाई</div>
+    <div><span class="cb"></span> टेलर / ड्रेसिंग</div>
+    <div><span class="cb"></span> हार्डवेयर</div>
+    <div><span class="cb"></span> इलेक्ट्रिकल</div>
+    <div><span class="cb"></span> फर्नीचर</div>
+    <div><span class="cb"></span> ज्वेलर्स</div>
+    <div><span class="cb"></span> मोबाइल / कंप्यूटर</div>
+    <div><span class="cb"></span> डिजिटल / मीडिया</div>
+    <div><span class="cb"></span> फूड / रेस्टोरेंट</div>
+    <div><span class="cb"></span> स्टेशनरी</div>
+    <div><span class="cb"></span> ड्राई क्लीनिंग</div>
+    <div><span class="cb"></span> प्लंबिंग / रेपेयर</div>
+    <div><span class="cb"></span> कोचिंग / ट्यूशन</div>
+    <div><span class="cb"></span> गारमेंट्स</div>
+    <div><span class="cb"></span> होलसेल</div>
+    <div><span class="cb"></span> अन्य: ____________</div>
+  </div>
+</div>
+
+<div class="sec">
+  <h2>2. Mobile / WhatsApp</h2>
+  <div class="row">
+    <div class="f" style="flex:2"><label class="lbl">Mobile Number * (10 अंक, बिना +91)</label><span class="blank"></span></div>
+    <div class="f" style="flex:2"><label class="lbl">WhatsApp Number (अगर अलग है)</label><span class="blank"></span></div>
+    <div class="f"><label class="lbl">Alternate नंबर</label><span class="blank"></span></div>
+  </div>
+  <div style="font-size:9.6pt;color:#dc2626;font-weight:700">⚠️ यह नंबर सबको दिखेगा — ग्राहक सीधे Call या WhatsApp कर सकेंगे।</div>
+</div>
+
+<div class="sec">
+  <h2>3. आप क्या बेचते / करते हैं?</h2>
+  <table class="items">
+    <tr><th style="width:26px">#</th><th style="width:27%">Type</th><th>Item / Service का नाम</th><th style="width:20%">दाम</th></tr>
+    <tr><td class="n">1</td><td class="c"></td><td></td><td></td></tr>
+    <tr><td class="n">2</td><td class="c"></td><td></td><td></td></tr>
+    <tr><td class="n">3</td><td class="c"></td><td></td><td></td></tr>
+    <tr><td class="n">4</td><td class="c"></td><td></td><td></td></tr>
+    <tr><td class="n">5</td><td class="c"></td><td></td><td></td></tr>
+    <tr><td class="n">6</td><td class="c"></td><td></td><td></td></tr>
+  </table>
+  <div style="font-size:9pt;color:#4b5563;margin-top:4px">
+    Example: <b>सब्ज़ी | आलू | 30/kg</b> &nbsp;•&nbsp; <b>सलून | हेयर कट | 200</b> &nbsp;•&nbsp; <b>डिजिटल | Logo Design | 500</b> — दाम न बढ़ता तो बेहतर
+  </div>
+</div>
+
+<div class="sec">
+  <h2>4. Photo + परिचय + हस्ताक्षर</h2>
+  <div class="split">
+    <div class="photobox">Business की photo यहाँ चिपकाएँ<br><b>(बोर्ड / नाम दिखना चाहिए)</b></div>
+    <div class="f">
+      <div class="row"><div class="f"><label class="lbl">एक लाइन में बताइए</label><span class="blank"></span></div></div>
+      <div class="row"><div class="f"><label class="lbl">विशेष बात (delivery / home service)</label><span class="blank"></span></div></div>
+      <div class="row">
+        <div class="f"><label class="lbl">मालिक का नाम</label><span class="blank"></span></div>
+        <div class="f"><label class="lbl">दिनांक</label><span class="blank"></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="sign">
+    <div class="s1">मालिक / Owner का दस्तखत</div>
+    <div class="s1">Society Office — जमा करने वाले का नाम</div>
+  </div>
+</div>
+
+<div class="foradmin">
+  <b>⚙️ केवल OFFICE के लिए — दुकानदार को नहीं भरना है</b> &nbsp;|&nbsp;
+  Photo मिलने पर data app में डाला जाएगा — <b>https://govt-colony.web.app</b><br>
+  Check: नाम ✓ · 10 अंक का नंबर ✓ · Photo ✓ · सामान/दाम ✓
+</div>
+
+<div class="foot">
+  <b>Colony Mitra</b> · सरकारी कॉलनी, घाटकोपर ईस्ट · https://govt-colony.web.app<br>
+  इस form से किसी से कोई फीस नहीं ली जाती।
+</div>
+
+</body>
+</html>

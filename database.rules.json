@@ -1,0 +1,32 @@
+{
+  "rules": {
+    "shops": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'colonymitra.admin@gmail.com'"
+    },
+    "updates": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'colonymitra.admin@gmail.com'"
+    },
+    "emergency": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'colonymitra.admin@gmail.com'"
+    },
+    "app": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'colonymitra.admin@gmail.com'"
+    },
+    "photos": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email === 'colonymitra.admin@gmail.com'"
+    },
+    "reviews": {
+      ".read": true,
+      ".write": true
+    },
+    "stats": {
+      ".read": "auth != null && auth.token.email === 'colonymitra.admin@gmail.com'",
+      ".write": true
+    }
+  }
+}

@@ -142,7 +142,7 @@ function sync() {
       DATA[k] = snap.val() || {};
       saveLocal();          // offline copy
       render();
-      if (k === "emergency") renderEmAdmin();
+      if (k === "emergency") { renderEmAdmin(); renderQuickAdd(); }
       if (k === "app") applyLogo();
     }, onErr);
   });
@@ -412,7 +412,8 @@ function renderEmAdmin() {
   box.innerHTML = list.map(e => `<div class="em-row">
       <span class="ic">${esc(e.icon || "📞")}</span>
       <div class="tx"><b>${esc(e.label)}</b><span>${esc(e.num)}</span></div>
-      <button class="mini" data-emedel="${e.id}" title="Delete">✕</button>
+      <button class="mini ed" data-emedit="${e.id}" title="Badlo">✏️</button>
+      <button class="mini" data-emedel="${e.id}" title="Hatao">✕</button>
     </div>`).join("");
 }
 
@@ -494,7 +495,7 @@ function renderUpdates() {
   }).join("");
 }
 
-function render() { renderChips(); renderShops(); renderUpdates(); renderEmergency(); }
+function render() { renderChips(); renderShops(); renderUpdates(); renderEmergency(); renderUnread(); }
 
 /* ============================================================
    SHOP DETAIL MODAL
@@ -797,6 +798,55 @@ function trackVisit() {
     .catch(() => {});
 }
 
+/* ============================================================
+   📢 UNREAD UPDATES  —  user ko pata chale naya kuch aaya hai
+   ============================================================ */
+const SEEN_KEY = "cm_seen_upd";
+
+function lastSeen() { return Number(localStorage.getItem(SEEN_KEY)) || 0; }
+
+function unreadUpdates() {
+  return Object.values(DATA.updates || {})
+    .filter(u => (u.ts || 0) > lastSeen())
+    .sort((a, b) => (b.ts || 0) - (a.ts || 0));
+}
+
+function renderUnread() {
+  const n     = unreadUpdates().length;
+  const badge = $("#updBadge");
+  const strip = $("#updStrip");
+
+  if (badge) {
+    badge.textContent = n > 9 ? "9+" : n;
+    badge.hidden = n === 0;
+    const tab = badge.closest(".tab");
+    if (tab) tab.classList.toggle("has-new", n > 0);
+  }
+
+  if (strip) {
+    const list = unreadUpdates();
+    strip.hidden = list.length === 0;
+    if (list.length) {
+      $("#usTitle").textContent =
+        list.length === 1 ? "नवीन अपडेट" : list.length + " नवीन अपडेट";
+      $("#usText").textContent = list[0].text;
+    }
+  }
+}
+
+/* user ne Updates tab khol liya -> sab padha hua */
+function markUpdatesSeen() {
+  const all = Object.values(DATA.updates || {});
+  const newest = all.reduce((m, u) => Math.max(m, u.ts || 0), 0);
+  if (newest) localStorage.setItem(SEEN_KEY, String(newest));
+  renderUnread();
+}
+
+/* ============================================================
+   📊 USERS  —  kitne log app use kar rahe hain
+   Har phone ka ek unique id. Naam/number KABHI nahi bachte.
+   Sirf count — koi personal data nahi.
+   ============================================================ */
 function renderStats() {
   const box = $("#statBox");
   if (!box) return;
@@ -951,6 +1001,47 @@ function loadAuthSDK() {
     document.head.appendChild(s);
   });
   return authReady;
+}
+
+/* ---------- EMERGENCY: edit ---------- */
+let EM_EDIT_ID = null;
+function editEm(id) {
+  const e = (DATA.emergency || {})[id];
+  if (!e) return;
+  EM_EDIT_ID = id;
+  $("#emIcon").value  = e.icon || "";
+  $("#emLabel").value = e.label || "";
+  $("#emNum").value   = e.num || "";
+  $("#emColor").value = e.color || "red";
+  $("#emForm").scrollIntoView({ behavior: "smooth", block: "center" });
+  $("#emLabel").focus();
+  toast("✏️ Badal raha hai — neeche number badal kar Add dabao");
+}
+
+/* Common colony numbers — ek tap me form bhar jaata hai */
+const QUICK = [
+  { icon:"💧", label:"Water Man",    color:"orange", ph:"पाण्याचा नंबर" },
+  { icon:"🛗", label:"Lift Man",     color:"blue",   ph:"Lift service नंबर" },
+  { icon:"🧹", label:"Cleaning Staff",color:"green", ph:"सफाईचा नंबर" },
+  { icon:"👮", label:"Society Guard",color:"blue",   ph:"Guard चा नंबर" },
+  { icon:"⚡", label:"BESB / Electricity", color:"orange", ph:"Power complaint" },
+  { icon:"🗑️", label:"Garbage / Municipal", color:"orange", ph:"कचरा नंबर" },
+  { icon:"🏥", label:"Nearest Hospital", color:"red",  ph:"Hospital चा नंबर" },
+  { icon:"🚓", label:"Police Chowki",  color:"blue",   ph:"Police station" },
+  { icon:"🔥", label:"Gas Agency",    color:"orange", ph:"Gas agency" },
+  { icon:"🐕", label:"Animal Control",color:"green",  ph:"Animal helpline" }
+];
+
+function renderQuickAdd() {
+  const box = $("#qaChips");
+  if (!box) return;
+  const have = Object.values(DATA.emergency || {}).map(e => (e.label || "").toLowerCase());
+  box.innerHTML = QUICK.map((q, i) => {
+    const done = have.some(h => h.indexOf(q.label.toLowerCase().split(" ")[0]) > -1);
+    return `<button type="button" class="qa ${done ? "done" : ""}" data-qa="${i}">
+      ${q.icon} ${q.label}${done ? " ✓" : ""}
+    </button>`;
+  }).join("");
 }
 
 function initAuth() {
@@ -1132,6 +1223,7 @@ function switchTab(name) {
 
 function init() {
   renderEmAdmin();
+  renderQuickAdd();
   applyLogo();
   applyAdminUI();
 
@@ -1148,7 +1240,16 @@ function init() {
   $$(".tab").forEach(t => t.onclick = () => {
     switchTab(t.dataset.tab);
     if (t.dataset.tab === "admin") initAuth().catch(() => {});
+    if (t.dataset.tab === "updates") markUpdatesSeen();
   });
+
+  // home page ka update strip -> Updates tab
+  const strip = $("#updStrip");
+  if (strip) strip.onclick = () => {
+    switchTab("updates");
+    markUpdatesSeen();
+    window.scrollTo(0, 0);
+  };
 
   // search + chips
   $("#search").oninput = e => { query = e.target.value; renderShops(); };
@@ -1248,13 +1349,16 @@ function init() {
     const label = $("#emLabel").value.trim();
     const num   = $("#emNum").value.trim();
     if (!label || !num) return toast("Label aur number dono chahiye");
-    write("emergency/e" + Date.now(), {
-      id: "e" + Date.now(), icon: $("#emIcon").value.trim() || "📞",
+
+    const id = EM_EDIT_ID || ("e" + Date.now());
+    write("emergency/" + id, {
+      id, icon: $("#emIcon").value.trim() || "📞",
       label, num, color: $("#emColor").value
     });
+    EM_EDIT_ID = null;
     e.target.reset();
     renderEmAdmin();
-    toast("🚨 Number add ho gaya");
+    toast("🚨 " + label + " — number save ho gaya");
   };
   $("#emReset").onclick = () => {
     if (!confirm("Default emergency list load karein? Purani custom numbers rehengi.")) return;
@@ -1265,9 +1369,28 @@ function init() {
     renderEmAdmin();
     toast("↩️ Default list aa gayi");
   };
+  // quick add chips
+  $("#qaChips").onclick = e => {
+    const b = e.target.closest("[data-qa]");
+    if (!b) return;
+    const q = QUICK[+b.getAttribute("data-qa")];
+    const ex = Object.values(DATA.emergency || {}).find(x => x.label === q.label);
+    if (ex) return editEm(ex.id);
+    EM_EDIT_ID = null;
+    $("#emIcon").value  = q.icon;
+    $("#emLabel").value = q.label;
+    $("#emNum").value   = "";
+    $("#emNum").placeholder = q.ph;
+    $("#emColor").value = q.color;
+    $("#emNum").focus();
+    toast("👉 अता फक्त नंबर भरा");
+  };
+
   $("#emAdminList").onclick = e => {
     const d = e.target.closest("[data-emedel]");
-    if (d) { removeAt("emergency/" + d.dataset.emedel); renderEmAdmin(); toast("🗑️ Hat gaya"); }
+    if (d) { removeAt("emergency/" + d.dataset.emedel); renderEmAdmin(); toast("🗑️ Hat gaya"); return; }
+    const ed = e.target.closest("[data-emedit]");
+    if (ed) editEm(ed.dataset.emedit);
   };
 
   // admin login

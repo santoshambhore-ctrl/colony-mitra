@@ -8,10 +8,10 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v16">
+<link rel="stylesheet" href="style.css?v18">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v16"></script>
+<script src="firebase-config.js?v18"></script>
 </head>
 <body>
 
@@ -42,7 +42,7 @@
 <nav class="tabs" role="tablist">
   <button class="tab active" data-tab="home">🏠 Business</button>
   <button class="tab" data-tab="em">🚨 Emergency</button>
-  <button class="tab" data-tab="updates">📢 Updates</button>
+  <button class="tab" data-tab="updates">📢 Updates <span class="tab-badge" id="updBadge" hidden>0</span></button>
   <button class="tab" data-tab="admin">⚙️ Admin</button>
 </nav>
 
@@ -52,6 +52,15 @@
     <input type="search" id="search" placeholder="🔍 Business ya kaam dhundho…" autocomplete="off">
   </div>
   <div class="chips" id="catChips"></div>
+  <div class="upd-strip" id="updStrip" hidden>
+    <span class="us-ic">📢</span>
+    <div class="us-txt">
+      <b id="usTitle">नवीन अपडेट</b>
+      <span id="usText"></span>
+    </div>
+    <span class="us-go">›</span>
+  </div>
+
   <div class="listhead"><span id="shopCount">0 Business</span></div>
   <div id="shopList" class="grid"></div>
   <p class="empty" id="homeEmpty">Abhi koi business nahi. Admin tab se pehla business add karo.</p>
@@ -184,6 +193,10 @@
     <div class="card">
       <h2>🚨 Emergency Numbers</h2>
       <p class="muted">Colony ke emergency contacts. Log ek tap me call kar sakte hain.</p>
+      <div class="quick-add">
+        <b>Jaldi add karne ke liye:</b>
+        <div class="qa-chips" id="qaChips"></div>
+      </div>
       <form id="emForm">
         <div class="row2">
           <div>
@@ -241,6 +254,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="app.js?v16"></script>
+<script src="app.js?v18"></script>
 </body>
 </html>

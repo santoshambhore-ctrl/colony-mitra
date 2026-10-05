@@ -540,7 +540,7 @@ function openShop(id) {
 
     ${!unlocked ? `
       <button class="admin-hint" data-gotoadmin>
-        🔐 दुकान बदलणे/फोटो बदलणे आहे? — इथे Login करा
+        🔐 Business बदलणे/फोटो बदलणे आहे? — इथे Login करा
       </button>`
     : `
       <div class="admin-on">

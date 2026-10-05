@@ -2,101 +2,141 @@
 <html lang="mr">
 <head>
 <meta charset="UTF-8">
-<title>Colony Mitra — महिला समिता</title>
+<title>Colony Mitra — App माहिती</title>
 <link rel="stylesheet" href="mr.css">
 <style>
   /* fixed A4 page */
-  body { height: 297mm; overflow: hidden; padding: 10mm 11mm; }
+  body { height: 297mm; overflow: hidden; padding: 8mm 9mm; }
 
   /* ---- header ---- */
   .top{
-    text-align:center; border-radius:13px; padding:15px 16px 14px;
-    background:linear-gradient(135deg,#7c3aed,#c026d3); color:#fff;
-    box-shadow:0 4px 14px rgba(124,58,237,.25);
+    text-align:center; border-radius:12px; padding:11px 14px 10px;
+    background:linear-gradient(135deg,#0f766e,#14b8a6); color:#fff;
+    box-shadow:0 3px 12px rgba(15,118,110,.25);
   }
   .top .kick{
     display:inline-block; background:rgba(255,255,255,.22);
-    padding:3px 15px; border-radius:99px; font-weight:bold;
-    font-size:10pt; margin-bottom:8px;
+    padding:2px 13px; border-radius:99px; font-weight:bold;
+    font-size:9pt; margin-bottom:5px;
   }
-  .top h1{ margin:0; font-size:22pt; font-weight:800; line-height:1.16; color:#fff; }
-  .top .s{ font-size:10.2pt; opacity:.95; margin-top:5px; }
+  .top h1{ margin:0; font-size:17pt; font-weight:800; line-height:1.15; color:#fff; }
+  .top .s{ font-size:9.2pt; opacity:.95; margin-top:3px; }
 
-  /* ---- what is it for ---- */
-  .why{
-    background:#faf5ff; border:1.5px solid #e9d5ff; border-left:5px solid #7c3aed;
-    border-radius:10px; padding:10px 14px; margin:12px 0;
+  /* ---- key dates ---- */
+  .twod{ display:flex; gap:9px; margin:9px 0 7px; }
+  .d1, .d2{ flex:1; border-radius:10px; padding:8px 11px; text-align:center; }
+  .d1{ background:#0f766e; color:#fff; }
+  .d2{ background:#fef2f2; border:2px solid #fca5a5; }
+  .d1 .t{ font-size:8.2pt; font-weight:800; opacity:.9; letter-spacing:.3px; }
+  .d1 .v{ font-size:13pt; font-weight:800; margin-top:1px; line-height:1.18; }
+  .d1 .s{ font-size:8.2pt; opacity:.92; }
+  .d2 .t{ font-size:8.2pt; font-weight:800; color:#b91c1c; letter-spacing:.3px; }
+  .d2 .v{ font-size:13pt; font-weight:800; color:#b91c1c; margin-top:1px; line-height:1.18; }
+  .d2 .s{ font-size:8.2pt; color:#7f1d1d; }
+
+  h2.g{ font-size:11pt; color:#0f766e; border-bottom:2.2px solid #14b8a6;
+        padding-bottom:3px; margin:9px 0 6px; }
+
+  /* ---- features grid ---- */
+  .fgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:5px; }
+  .fg{ border:1px solid #ccfbf1; border-left:3.5px solid #14b8a6; border-radius:7px;
+       padding:6px 8px; background:#f6fefb; line-height:1.3; }
+  .fg .ic{ font-size:12pt; }
+  .fg b{ display:block; font-size:9.2pt; color:#0f766e; }
+  .fg span{ font-size:8.2pt; color:#4b5563; }
+
+  /* ---- what to share ---- */
+  .share{ display:flex; gap:9px; align-items:flex-start; margin-bottom:4px;
+          background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:5px 10px; }
+  .share .n{
+    flex-shrink:0; width:19px; height:19px; border-radius:50%;
+    background:#16a34a; color:#fff; text-align:center; line-height:19px;
+    font-weight:800; font-size:10pt;
   }
-  .why .t{ font-size:11.5pt; font-weight:800; color:#6d28d9; margin-bottom:5px; }
-  .why ul{ margin:0; padding-left:19px; }
-  .why li{ font-size:9.8pt; line-height:1.5; margin-bottom:2px; }
+  .share b{ font-size:9.6pt; color:#14532d; }
+  .share div span{ font-size:8.8pt; color:#4b5563; }
 
-  h2.g{ font-size:12.5pt; color:#7c3aed; border-bottom:2.5px solid #c026d3;
-        padding-bottom:4px; margin:13px 0 8px; }
-
-  /* ---- members ---- */
-  table.m{ width:100%; border-collapse:separate; border-spacing:0 5px; }
+  /* ---- contact table ---- */
+  table.m{ width:100%; border-collapse:separate; border-spacing:0 3.5px; }
   table.m th{
-    background:#7c3aed; color:#fff; padding:7px 12px; text-align:left;
-    font-size:10pt; font-weight:700;
+    background:#0f766e; color:#fff; padding:5px 10px; text-align:left;
+    font-size:9.2pt; font-weight:700;
   }
-  table.m th:first-child{ border-radius:9px 0 0 9px; width:44px; text-align:center; }
-  table.m th:last-child { border-radius:0 9px 9px 0; }
+  table.m th:first-child{ border-radius:8px 0 0 8px; width:38px; text-align:center; }
+  table.m th:last-child { border-radius:0 8px 8px 0; }
   table.m td{
-    background:#fdfcff; border-top:1.2px solid #ede9fe; border-bottom:1.2px solid #ede9fe;
-    padding:9px 12px; font-size:11pt; vertical-align:middle;
+    background:#fff; border-top:1.1px solid #ccfbf1; border-bottom:1.1px solid #ccfbf1;
+    padding:6.5px 10px; font-size:10pt; vertical-align:middle;
   }
   table.m td.no{
-    text-align:center; color:#7c3aed; font-weight:800; font-size:10pt;
-    border-left:1.2px solid #ede9fe;
+    text-align:center; color:#0f766e; font-weight:800; font-size:9pt;
+    border-left:1.1px solid #ccfbf1;
   }
-  table.m td.nm{ font-weight:700; color:#1c1c1e; font-size:11.5pt; }
+  table.m td.nm{ font-weight:700; color:#1c1c1e; font-size:10.4pt; }
   table.m td.nb{
-    font-weight:800; color:#6d28d9; font-size:12.5pt;
+    font-weight:800; color:#115e59; font-size:11.4pt;
     letter-spacing:.4px; white-space:nowrap;
-    border-right:1.2px solid #ede9fe; text-align:right;
+    border-right:1.1px solid #ccfbf1; text-align:right;
   }
-  table.m tr:nth-child(even) td{ background:#faf7ff; }
+  table.m tr:nth-child(even) td{ background:#f6fefb; }
 
   /* ---- note ---- */
   .note2{
-    background:#f0fdf4; border:1.5px solid #bbf7d0; border-left:5px solid #16a34a;
-    border-radius:10px; padding:10px 14px; margin:12px 0;
-    font-size:9.8pt; line-height:1.5;
+    background:#fffbeb; border:1.4px solid #fde68a; border-left:5px solid #f59e0b;
+    border-radius:9px; padding:8px 12px; margin:9px 0 0;
+    font-size:8.9pt; line-height:1.45;
   }
-  .note2 b{ color:#15803d; }
+  .note2 b{ color:#b45309; }
 
-  .contactline{
-    background:#0f172a; color:#fff; border-radius:10px; padding:10px 14px;
-    text-align:center; margin:10px 0;
-  }
-  .contactline .t{ font-size:10.5pt; font-weight:800; color:#7dd3fc; }
-  .contactline .s{ font-size:9.2pt; color:#cbd5e1; margin-top:3px; }
-
-  .footer{ margin-top:12px; padding-top:8px; border-top:1px solid #d5d9de;
-           font-size:8.6pt; color:#6b7280; text-align:center; line-height:1.5; }
+  .footer{ margin-top:7px; padding-top:6px; border-top:1px solid #d5d9de;
+           font-size:8pt; color:#6b7280; text-align:center; line-height:1.45; }
 </style>
 </head>
 <body>
 
 <div class="top">
   <div class="kick">सरकारी कॉलनी, घाटकोपर ईस्ट</div>
-  <h1>🌸 महिला समिता</h1>
-  <div class="s">सद्स्यांची यादी व संपर्क क्रमांक</div>
+  <h1>🏘️ Colony Mitra App</h1>
+  <div class="s">आम्ही बनवलेले App — माहिती पोहोचवण्यासाठी संपर्क यादी</div>
 </div>
 
-<div class="why">
-  <div class="t">🌷 समिता कशासाठी?</div>
-  <ul>
-    <li>कॉलनीतील <b>महिलांच्या समस्या</b> ऐकणे व सोडवणे</li>
-    <li>सभा, कार्यक्रम व उपक्रम आयोजित करणे</li>
-    <li>निवडणूक, पाणी, साफसफाई, सुरक्षा — <b>कॉलनीसाठी लागणाऱ्या गोष्टींवर चर्चा</b></li>
-    <li>महिला कर्मचारी व स्वयंसेवकांचा समूह तयार करणे</li>
-    <li>निवडणूक व कार्यक्रमांची माहिती एकत्र पोहोचवणे</li>
-  </ul>
+<div class="twod">
+  <div class="d1">
+    <div class="t">APP सुरू होत आहे</div>
+    <div class="v">२० ऑक्टोबर २०२६</div>
+    <div class="s">सोमवार · सकाळी १० वाजता</div>
+  </div>
+  <div class="d2">
+    <div class="t">BUSINESS नोंदणी — शेवटची तारीख</div>
+    <div class="v">१८ ऑक्टोबर</div>
+    <div class="s">त्या दिवशी फॉर्म हवा</div>
+  </div>
 </div>
 
-<h2 class="g">📞 सद्स्यांची नोंद — संपर्कासाठी</h2>
+<h2 class="g">📱 App मध्ये काय आहे?</h2>
+
+<div class="fgrid">
+  <div class="fg"><div class="ic">🏪</div><b>सगळ्या Business ची नोंद</b><span>नाव, नंबर, फोटो</span></div>
+  <div class="fg"><div class="ic">📦</div><b>सामान आणि दर</b><span>काय विकते, किती दर</span></div>
+  <div class="fg"><div class="ic">💬</div><b>थेट WhatsApp</b><span>एका टॅपवर बोला</span></div>
+  <div class="fg"><div class="ic">📞</div><b>थेट Call</b><span>नंबर एक टॅपवर</span></div>
+  <div class="fg"><div class="ic">🔍</div><b>शोधणे सोपे</b><span>"सब्जी", "दूध" लिहा</span></div>
+  <div class="fg"><div class="ic">⭐</div><b>ग्राहकांचे अभिप्राय</b><span>कॉलनीतील लोकांचा अनुभव</span></div>
+  <div class="fg"><div class="ic">🚨</div><b>Emergency नंबर</b><span>पोलीस, रुग्णवाहिका, गार्ड</span></div>
+  <div class="fg"><div class="ic">📢</div><b>ऑफर आणि सूचना</b><span>सवलत, नवीन Business, पाणी</span></div>
+  <div class="fg"><div class="ic">🆓</div><b>पूर्णपणे FREE</b><span>नोंदणी, login, charge नाही</span></div>
+</div>
+
+<h2 class="g">📢 काय माहिती पाठवायची?</h2>
+
+<div class="share"><div class="n">1</div><div><b>मराठी पुस्तिका (3 पान) WhatsApp करा</b><br>
+  <span>App काय आहे, कसे Install करावे — सगळं सविस्तार सांगितलं आहे</span></div></div>
+<div class="share"><div class="n">2</div><div><b>Business असल्यास Registration Form द्या</b><br>
+  <span>फॉर्म भरून office मध्ये द्यायचा — १८ ऑक्टोबरपर्यंत</span></div></div>
+<div class="share"><div class="n">3</div><div><b>App चा link — २० ऑक्टोबर रोजी</b><br>
+  <span>आजी link पाठवायचा नाही. २० ऑक्टोबर सकाळी १० वाजता कळवला जाईल</span></div></div>
+
+<h2 class="g">📞 माहिती पोहोचवण्यासाठी संपर्क</h2>
 
 <table class="m">
   <tr><th>क्र.</th><th>नाव</th><th style="text-align:right">मोबाइल नंबर</th></tr>
@@ -118,24 +158,14 @@
 </table>
 
 <div class="note2">
-  <b>📌 आम्ही स्पष्ट सांगतो</b><br>
-  • समितेच्या नोंदीसाठी <b>कुणालाही पैसे द्यायची गरज नाही.</b> निवडणूक नाही.<br>
-  • वरचे सर्व नंबर <b>फक्त समिता तयार करण्यासाठी</b> आहेत — कार्यक्रमाच्या
-  निमित्तानेच संपर्क केला जाईल.<br>
-  • समितेचा कार्यक्रम हा <b>आपल्या सर्वांच्या सहमतीने</b> ठरवला जाईल.
-</div>
-
-<div class="contactline">
-  <div class="t">📋 कामाचा क्रम</div>
-  <div class="s">
-    1. सभा तरवार करणे &nbsp;•&nbsp; 2. सद्स्यांना कळवणे &nbsp;•&nbsp;
-    3. समिता नोंदणी &nbsp;•&nbsp; 4. पहिली बैठक
-  </div>
+  <b>📌 लक्षात ठेवा</b> &nbsp; App पूर्णपणे विनामूल्य आहे · <b>कोणी ही फसत नाही</b> ·
+  फक्त व्यवसायाची नाव, नंबर, फोटो व दर दिसते · कोणत्याही व्यक्तीला पैसे मागण्याची गरज नाही ·
+  प्रश्न आल्यास वरील नंबरवर संपर्क करा.
 </div>
 
 <div class="footer">
-  <b>Colony Mitra</b> · सरकारी कॉलनी, घाटकोपर ईस्ट<br>
-  महिला समिता — सद्स्यांची यादी
+  <b>Colony Mitra</b> · सरकारी कॉलनी, घाटकोपर ईस्ट · कोणी ही फसत नाही<br>
+  App माहिती पोहोचवणे — संपर्क यादी
 </div>
 
 </body>

@@ -563,6 +563,10 @@ function openShop(id) {
         <input type="file" id="phFile" accept="image/*" multiple hidden>
         <button class="pbtn" id="phSet">🔄 सारी फोटो बदला</button>
         <button class="pbtn" id="phAdd">➕ आणखी फोटो जोडा</button>
+        <button class="pbtn danger" id="phDelAll">🗑️ सारी फोटो हटवा</button>
+      </div>
+      <div class="ph-hint" style="margin:-4px 0 12px">
+        Photo हटाने के लिए नीचे <b>✕</b> बटन दबाओ.
       </div>` : ""}
 
     ${s.photos && s.photos.length > 1 ? `
@@ -593,7 +597,10 @@ function openShop(id) {
       const rev = $("#revSec");
       if (rev && list.length > 1) rev.parentNode.insertBefore(gal, rev);
     }
-    if (gal) gal.innerHTML = list.map(p => `<img src="${p}" data-full="${p}">`).join("");
+    if (gal) gal.innerHTML = list.map((p, i) =>
+      `<div class="ph"><img src="${p}" data-full="${p}" alt="Photo ${i+1}">${
+        unlocked ? `<button class="x" data-pdel="${i}" title="Hatao">✕</button>` : ""
+      }</div>`).join("");
   });
 }
 
@@ -1187,8 +1194,69 @@ function editShop(id) {
 }
 
 function showThumbs() {
-  $("#photoPreview").innerHTML =
-    NEW_PHOTOS.map((p, i) => `<img src="${p}" data-del="${i}">`).join("");
+  const box = $("#photoPreview");
+  if (!box) return;
+  if (!NEW_PHOTOS.length) {
+    box.innerHTML = `<div class="ph-hint" style="grid-column:1/-1">
+      Kahi photo nahi — upar se photo chuno.</div>`;
+    return;
+  }
+  box.innerHTML = NEW_PHOTOS.map((p, i) =>
+    `<div class="ph"><img src="${p}" alt="Photo ${i+1}">
+       <button type="button" class="x" data-del="${i}" title="Hatao">✕</button></div>`
+  ).join("");
+}
+
+/* ---------- PHOTO DELETE (sirf admin) ---------- */
+async function delPhotoAt(idx, fromModal) {
+  const id = CUR_SHOP || $("#fId").value;
+  const list = (fromModal ? (PHOTOS[id] || []) : NEW_PHOTOS) || [];
+  if (!list[idx]) return;
+
+  if (!confirm("Ye photo delete karni hai?\n\nBaad me wapas nahi aayegi.")) return;
+
+  if (fromModal) {
+    const rest = list.slice();
+    rest.splice(idx, 1);
+    await savePhotos(id, rest);
+    await refreshThumb(id, rest);
+    delete PHOTOS[id];
+    PHOTOS[id] = rest;
+    openShop(id);
+    render();
+    toast("🗑️ Photo delete ho gayi");
+  } else {
+    NEW_PHOTOS.splice(idx, 1);
+    if (!NEW_PHOTOS.length) NEW_THUMB = null;
+    showThumbs();
+    toast("🗑️ Photo hat gayi — Save dabao");
+  }
+}
+
+async function delAllPhotos() {
+  if (!NEW_PHOTOS.length) return toast("Kahi photo nahi hai");
+  if (!confirm("सारी " + NEW_PHOTOS.length + " photos delete करनी हैं?\n\nSave दबाने के बाद हटेंगी।")) return;
+  NEW_PHOTOS = [];
+  NEW_THUMB = null;
+  showThumbs();
+  toast("🗑️ सारी photos हट गई — Save दबाओ");
+}
+
+/* thumb banao — phir se (pehli photo badli ho to) */
+async function refreshThumb(id, list) {
+  if (!id || !FB_DB) return;
+  if (!list.length) {
+    await FB_DB.ref("shops/" + id + "/thumb").remove().catch(() => {});
+    const sh = Object.assign({}, DATA.shops[id]); delete sh.thumb;
+    DATA.shops[id] = sh; saveLocal(); render();
+    return;
+  }
+  const th = await renderImageFromDataUrl(list[0], 340, .55);
+  if (th) {
+    await FB_DB.ref("shops/" + id + "/thumb").set(th).catch(() => {});
+    const sh = DATA.shops[id] = Object.assign({}, DATA.shops[id], { thumb: th });
+    saveLocal(); render();
+  }
 }
 
 function delShop(id) {
@@ -1267,9 +1335,17 @@ function init() {
   // modal
   $("#closeShop").onclick = () => $("#shopModal").classList.remove("on");
   $("#shopModal").onclick = e => { if (e.target.id === "shopModal") e.currentTarget.classList.remove("on"); };
-  $("#shopBody").onclick = e => {
+  $("#shopBody").onclick = async e => {
     const ed = e.target.closest("[data-edit]");
     if (ed) return editShop(ed.dataset.edit);
+
+    /* photo delete — admin only */
+    const pd = e.target.closest("[data-pdel]");
+    if (pd) {
+      if (!unlocked) return toast("🔒 Sirf admin");
+      e.stopPropagation();
+      return delPhotoAt(+pd.dataset.pdel, true);
+    }
 
     const full = e.target.closest("[data-full]");
     if (full) return window.open(full.dataset.full, "_blank");
@@ -1312,6 +1388,19 @@ function init() {
     if (e.target.id === "phAdd") {
       PHOTO_MODE = "add";
       const f = $("#phFile"); if (f) { f.value = ""; f.click(); }
+      return;
+    }
+    if (e.target.id === "phDelAll") {
+      const id = CUR_SHOP;
+      const list = (PHOTOS[id] || []).slice();
+      if (!list.length) return toast("Kahi photo nahi hai");
+      if (!confirm("सारी " + list.length + " photos हटानी हैं?\n\nहा दुसरे वेळ परत येणार नाहीत.")) return;
+      await savePhotos(id, []);
+      delete PHOTOS[id];
+      await refreshThumb(id, []);
+      openShop(id);
+      render();
+      toast("🗑️ सारी photos हट गई");
       return;
     }
   };
@@ -1421,11 +1510,12 @@ function init() {
     e.target.value = "";
   };
   $("#photoPreview").onclick = e => {
-    const i = e.target.closest("[data-del]");
-    if (!i) return;
-    NEW_PHOTOS.splice(+i.dataset.del, 1);
-    showThumbs();
+    const x = e.target.closest("[data-del]");
+    if (!x) return;
+    delPhotoAt(+x.dataset.del, false);
   };
+  const dab = $("#delAllPhotos");
+  if (dab) dab.onclick = delAllPhotos;
 
   // updates delete (admin only)
   $("#updateList").onclick = e => {

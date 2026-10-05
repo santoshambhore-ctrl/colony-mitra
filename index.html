@@ -8,10 +8,10 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v18">
+<link rel="stylesheet" href="style.css?v19">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v18"></script>
+<script src="firebase-config.js?v19"></script>
 </head>
 <body>
 
@@ -162,6 +162,10 @@
         <label>Business ki photos</label>
         <input type="file" id="fPhotos" accept="image/*" multiple>
         <div id="photoPreview" class="thumbs"></div>
+        <div class="ph-tools">
+          <span class="ph-hint">Photo hatane ke liye uske <b>✕</b> par tap karo</span>
+          <button type="button" class="btn tiny danger" id="delAllPhotos">🗑️ सारी फोटो हटवा</button>
+        </div>
 
         <label class="check"><input type="checkbox" id="fNew"> 🆕 Naya business shuru hua</label>
         <label class="check"><input type="checkbox" id="fOpen"> 🟢 Abhi khuli hai</label>
@@ -254,6 +258,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="app.js?v18"></script>
+<script src="app.js?v19"></script>
 </body>
 </html>

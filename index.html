@@ -8,10 +8,10 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v20">
+<link rel="stylesheet" href="style.css?v21">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v20"></script>
+<script src="firebase-config.js?v21"></script>
 </head>
 <body>
 
@@ -134,7 +134,35 @@
         <input id="fName" required placeholder="e.g. Sharma General Store">
 
         <label>Category</label>
-        <input id="fCategory" placeholder="e.g. Kirana, Salon, Clinic, Tailor">
+        <input id="fCategory" list="catList" placeholder="e.g. Kirana, Salon, Clinic, Tailor">
+        <datalist id="catList">
+          <option value="Kirana / Grocery"></option>
+          <option value="Sabzi &amp; Fruit"></option>
+          <option value="Masale / Spices"></option>
+          <option value="Doodh / Dairy"></option>
+          <option value="Bakery"></option>
+          <option value="Xerox Printing"></option>
+          <option value="Baby Setting &amp; Products"></option>
+          <option value="Medical / Pharmacy"></option>
+          <option value="Clinic / Doctor"></option>
+          <option value="Salon / Beauty Parlour"></option>
+          <option value="Tailor / Boutique"></option>
+          <option value="Saree / Dress Shop"></option>
+          <option value="Jewellers"></option>
+          <option value="Mobile &amp; Accessories"></option>
+          <option value="Electrical Repairs"></option>
+          <option value="Carpenter / Furniture"></option>
+          <option value="Plumber"></option>
+          <option value="Electrician"></option>
+          <option value="Travel / Tours"></option>
+          <option value="Cyber / Internet Cafe"></option>
+          <option value="Photo Studio / Digital Media"></option>
+          <option value="Laundry / Dry Cleaner"></option>
+          <option value="Iron Pressing"></option>
+          <option value="Stationery / Books"></option>
+          <option value="Pet Shop"></option>
+          <option value="Home Service"></option>
+        </datalist>
 
         <label>Business Code / No. (optional)</label>
         <input id="fCode" placeholder="Khali chhodne se apne aap: GC-001, GC-002..." maxlength="12">
@@ -258,6 +286,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="app.js?v20"></script>
+<script src="app.js?v21"></script>
 </body>
 </html>

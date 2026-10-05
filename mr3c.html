@@ -2,7 +2,7 @@
 <html lang="mr">
 <head>
 <meta charset="UTF-8">
-<title>Colony Mitra — App सुरू होणार (पान ३)</title>
+<title>Colony Mitra — App सुरू होणार (पाना ३)</title>
 <link rel="stylesheet" href="mr.css">
 <style>
   /* fixed A4 page — ek pan, kahi cut nahi hoga */
@@ -19,14 +19,10 @@
     padding:3px 15px; border-radius:99px; font-weight:bold;
     font-size:10pt; margin-bottom:6px;
   }
-  .launch .big{
-    font-size:20pt; font-weight:800; line-height:1.14;
-    letter-spacing:-.3px;
-  }
+  .launch .big{ font-size:20pt; font-weight:800; line-height:1.14; letter-spacing:-.3px; }
   .launch .dt{
     margin-top:7px; background:#fff; color:#0f766e;
-    border-radius:10px; padding:8px 14px; display:inline-block;
-    min-width:245px;
+    border-radius:10px; padding:8px 14px; display:inline-block; min-width:250px;
   }
   .launch .dt .d{ font-size:15.5pt; font-weight:800; line-height:1.2; }
   .launch .dt .t{ font-size:11.5pt; font-weight:700; color:#115e59; margin-top:1px; }
@@ -40,36 +36,27 @@
   .dl .t{ font-size:12.8pt; font-weight:800; color:#b91c1c; }
   .dl .s{ font-size:9.6pt; color:#7f1d1d; margin-top:3px; line-height:1.45; }
 
-  /* ---- url pill ---- */
-  .urlbox{
-    background:#0f172a; color:#7dd3fc; border-radius:9px; padding:8px;
-    text-align:center; font-size:12pt; font-weight:800; letter-spacing:.2px;
-    margin:8px 0;
+  /* ---- link-holding box (link abhi nahi!) ---- */
+  .wait{
+    background:#0f172a; color:#fff; border-radius:10px; padding:11px 14px;
+    margin:9px 0; text-align:center;
   }
+  .wait .t{ font-size:11.5pt; font-weight:800; color:#7dd3fc; }
+  .wait .s{ font-size:9.4pt; color:#cbd5e1; margin-top:3px; line-height:1.45; }
 
   /* ---- safety ---- */
   .safe{ border:2.5px solid #16a34a; border-radius:12px; overflow:hidden; margin:8px 0; }
-  .safe .hd{
-    background:#16a34a; color:#fff; padding:7px 15px;
-    font-size:12.8pt; font-weight:800;
-  }
+  .safe .hd{ background:#16a34a; color:#fff; padding:7px 15px; font-size:12.8pt; font-weight:800; }
   .safe ul{ list-style:none; margin:0; padding:7px 15px 8px; }
-  .safe li{
-    font-size:9.6pt; line-height:1.38; margin-bottom:2px;
-    padding-left:21px; position:relative;
-  }
+  .safe li{ font-size:9.5pt; line-height:1.36; margin-bottom:2px; padding-left:21px; position:relative; }
   .safe li:last-child{ margin-bottom:0; }
-  .safe li::before{
-    content:"✓"; position:absolute; left:0; top:0;
-    color:#16a34a; font-weight:900; font-size:11pt;
-  }
+  .safe li::before{ content:"✓"; position:absolute; left:0; top:0; color:#16a34a; font-weight:900; font-size:11pt; }
   .safe li b{ color:#15803d; }
 
   /* ---- install steps ---- */
   .ip{
     display:flex; gap:10px; align-items:flex-start; margin-bottom:4px;
-    background:#f0fdf4; border:1px solid #bbf7d0; border-radius:9px;
-    padding:5px 11px;
+    background:#f0fdf4; border:1px solid #bbf7d0; border-radius:9px; padding:5px 11px;
   }
   .ip .n{
     flex-shrink:0; width:21px; height:21px; border-radius:50%;
@@ -79,14 +66,15 @@
   .ip b{ font-size:10.2pt; color:#14532d; }
   .ip div span{ font-size:9.2pt; color:#4b5563; }
 
-  .pcard{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:7px;
-          padding:5px 11px; font-size:9.2pt; color:#475569; margin-top:6px;
-          text-align:center; }
-
-  /* compact table */
-  table{ margin:3px 0 0 !important; }
-  table th{ padding:4px 10px; font-size:9.4pt; }
-  table td{ padding:3px 10px; font-size:9.6pt; }
+  /* ---- compact contact (inline, table नहीं) ---- */
+  .ct{ display:grid; grid-template-columns:1fr 1fr; gap:5px 10px; margin-top:4px; }
+  .ct div{
+    display:flex; justify-content:space-between; gap:8px;
+    background:#f0f9f5; border:1px solid #ccfbf1; border-radius:8px;
+    padding:5px 10px; font-size:9.6pt;
+  }
+  .ct b{ color:#0f766e; font-weight:700; }
+  .ct .n{ font-weight:800; color:#115e59; letter-spacing:.2px; white-space:nowrap; }
 
   .footer{ margin-top:7px; padding-top:6px; font-size:8.2pt; }
 </style>
@@ -107,11 +95,17 @@
   <div class="dt">
     <div class="d">२० ऑक्टोबर २०२६</div>
     <div class="t">सोमवार · सकाळी १० वाजता</div>
-    <div class="w">त्याच दिवशी सकाळी १० वाजता App चा link मिळेल</div>
+    <div class="w">त्या दिवशी सकाळी १० वाजतापासून App चा link मिळेल</div>
   </div>
 </div>
 
-<div class="urlbox">👇 https://govt-colony.web.app</div>
+<div class="wait">
+  <div class="t">🔗 App चा link — २० ऑक्टोबर रोजीच मिळेल</div>
+  <div class="s">
+    आजी link दिलेला नाही. २० ऑक्टोबर सकाळी १० वाजता<br>
+    कॉलनी ग्रुपमध्ये link पाठवला जाईल. <b>आपण फक्त तेवढ्याच वाट पहा.</b>
+  </div>
+</div>
 
 <div class="dl">
   <div class="t">⏰ दुकान नोंदणी — शेवटची तारीख: १८ ऑक्टोबर</div>
@@ -127,41 +121,36 @@
   <div class="hd">✅ आम्ही स्पष्ट सांगतो — काळजी करू नका</div>
   <ul>
     <li><b>पैसे भरायचे नाहीत</b> — App वापरण्यासाठी एक रुपयाही खर्च नाही.</li>
+    <li><b>फक्त व्यवसायाची माहिती</b> — नाव, नंबर, फोटो, दर. बँक जाहीरात, OTP, Aadhaar असे काहीही नाही.</li>
     <li><b>कोणतेही खाते (login) लागत नाही</b> — नाव, नंबर काहीही भरायची गरज नाही.</li>
     <li><b>Play Store ला जाण्याची गरज नाही</b> — फक्त Chrome मधून link उघडा.</li>
     <li><b>फोन हळू होत नाही</b> — App फक्त फोनवरच चालते, memory भरत नाही.</li>
     <li><b>फक्त आपल्या कॉलनीसाठी</b> — बाहेरचा कोणी हा App वापरू शकत नाही.</li>
-    <li><b>फसवणूक करता येत नाही</b> — App मध्ये फक्त दुकानाचे नाव, नंबर, फोटो व दर दिसते.</li>
-    <li><b>तुमचा नंबर इतरत्र वापरला जात नाही.</b></li>
+    <li><b>तुमचा नंबर फक्त Call / WhatsApp साठी</b> — फसवणूक करण्यासाठी कोणी वापरत नाही.</li>
+    <li><b>माहिती फक्त आपल्या कॉलनीला दिसते</b> — इतर कॉलनीचे लोक पण पाहू शकत नाहीत.</li>
+    <li><b>माहिती बदलणारा फक्त आपला admin</b> — दुसऱ्या कोणाच्या कडून बदल होत नाही.</li>
   </ul>
 </div>
 
-<h2 style="margin:8px 0 5px">📲 App कसा Install करावा? — फक्त ३ steps</h2>
+<h2 style="margin:8px 0 5px">📲 Link मिळाल्यावर हे ३ steps करा</h2>
 
 <div class="ip"><div class="n">1</div><div><b>Chrome उघडा</b><br>
-  <span>वरील link टाका: <b>https://govt-colony.web.app</b></span></div></div>
+  <span>कॉलनी ग्रुपमध्ये आलेला App चा link उघडा</span></div></div>
 <div class="ip"><div class="n">2</div><div><b>⋮ मेनू दाबा</b><br>
-  <span>मेनूमध्ये <b>"Install app"</b> किंवा <b>"Add to Home screen"</b> दाबा</span></div></div>
+  <span><b>"Install app"</b> किंवा <b>"Add to Home screen"</b> दाबा</span></div></div>
 <div class="ip"><div class="n">3</div><div><b>बस, App तयार! 🏠</b><br>
   <span>फोनच्या मुख्य स्क्रीनवर Colony Mitra चा icon दिसेल</span></div></div>
 
-<div class="pcard">
-  <b style="color:#0f766e">⏰ लक्षात ठेवा:</b>
-  दुकान नोंदणी १८ ऑक्टोबरपर्यंत &nbsp;•&nbsp;
-  App सुरू २० ऑक्टोबर सकाळी १० वाजता
+<h2 style="margin:8px 0 4px">📞 काही अडचण आली तर संपर्क साधा</h2>
+<div class="ct">
+  <div><b>संतोष</b><span class="n">81088 08281</span></div>
+  <div><b>सनी</b><span class="n">99676 24267</span></div>
+  <div><b>राजेश</b><span class="n">94217 70071</span></div>
+  <div><b>प्रफुल</b><span class="n">95035 71579</span></div>
 </div>
 
-<h2 style="margin:9px 0 4px">📞 काही अडचण आली तर संपर्क साधा</h2>
-<table style="margin-top:2px">
-  <tr><th style="width:52%">नाव</th><th>मोबाइल नंबर</th></tr>
-  <tr><td><b>संतोष आंभोरे</b></td><td class="num">81088 08281</td></tr>
-  <tr><td><b>सनी हौसेलमल</b></td><td class="num">99676 24267</td></tr>
-  <tr><td><b>राजेश उमरे</b></td><td class="num">94217 70071</td></tr>
-  <tr><td><b>प्रफुल यशवंते</b></td><td class="num">95035 71579</td></tr>
-</table>
-
 <div class="footer">
-  <b>Colony Mitra</b> · सरकारी कॉलनी, घाटकोपर ईस्ट · https://govt-colony.web.app — पान ३ / ३
+  <b>Colony Mitra</b> · सरकारी कॉलनी, घाटकोपर ईस्ट — पान ३ / ३
 </div>
 
 </body>

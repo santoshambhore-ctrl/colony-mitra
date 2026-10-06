@@ -423,6 +423,8 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:1
 .act-call{background:var(--pri)}
 .act-msg{background:#2563eb}
 .act-edit{background:var(--bg);color:var(--txt)}
+.act-del{background:#fef2f2;color:#b91c1c;border:1.5px solid #fecaca}
+.act-del:active{background:#fee2e2}
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}
 .gallery img{
   width:100%;aspect-ratio:1;object-fit:contain;border-radius:10px;

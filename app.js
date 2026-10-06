@@ -536,6 +536,7 @@ function openShop(id) {
       ${tel ? `<a class="act act-call" href="tel:+${tel}">📞 Call</a>` : ""}
       ${waLink ? `<a class="act act-msg" href="https://wa.me/${wa}" target="_blank" rel="noopener">💬 Chat only</a>` : ""}
       ${unlocked ? `<button class="act act-edit" data-edit="${s.id}">✏️ Edit</button>` : ""}
+      ${unlocked ? `<button class="act act-del" data-del-shop="${s.id}">🗑️ Delete</button>` : ""}
     </div>
 
     ${!unlocked ? `
@@ -1259,12 +1260,45 @@ async function refreshThumb(id, list) {
   }
 }
 
-function delShop(id) {
-  if (!confirm("Ye business delete karni hai?")) return;
-  removeAt("shops/" + id);
-  if (FB_DB) FB_DB.ref("photos/" + id).remove().catch(() => {});
+/* ---------- BUSINESS DELETE (sirf admin) ---------- */
+async function delShop(id) {
+  if (!unlocked) return toast("🔒 Sirf admin");
+
+  const s = (DATA.shops || {})[id];
+  if (!s) return toast("Ye business mila nahi");
+
+  /* photo count + review count batao — user ko pata chale kya jayega */
+  const nPhotos = (PHOTOS[id] || s.photos || []).length;
+  const nRev = Object.keys((DATA.reviews || {})[id] || {}).length;
+
+  const msg =
+    "🗑️  " + s.name + "  मिटवायची?\n\n" +
+    "• Business ची नोंद हटेल\n" +
+    (nPhotos ? "• " + nPhotos + " फोटो हटतील\n" : "") +
+    (nRev   ? "• " + nRev + " review हटतील\n" : "") +
+    "\n⚠️ हे सगळं परत आणता येणार नाही. खात्री आहे?";
+
+  if (!confirm(msg)) return;
+
+  const name = s.name;
+
+  if (FB_DB) {
+    await FB_DB.ref("shops/" + id).remove().catch(() => {});
+    await FB_DB.ref("photos/" + id).remove().catch(() => {});
+    await FB_DB.ref("reviews/" + id).remove().catch(() => {});
+  } else {
+    removeAt("shops/" + id);
+    removeAt("reviews/" + id);
+  }
+
   delete PHOTOS[id];
-  toast("🗑️ Delete ho gayi");
+  delete DATA.reviews[id];
+
+  /* modal band + list refresh */
+  $("#shopModal").classList.remove("on");
+  CUR_SHOP = null;
+  render();
+  toast("🗑️ " + name + " delete ho gayi");
 }
 
 /* ---------- BACKUP ---------- */
@@ -1345,6 +1379,14 @@ function init() {
       if (!unlocked) return toast("🔒 Sirf admin");
       e.stopPropagation();
       return delPhotoAt(+pd.dataset.pdel, true);
+    }
+
+    /* business delete — admin only */
+    const ds = e.target.closest("[data-del-shop]");
+    if (ds) {
+      if (!unlocked) return toast("🔒 Sirf admin");
+      e.stopPropagation();
+      return delShop(ds.dataset.delShop);
     }
 
     const full = e.target.closest("[data-full]");

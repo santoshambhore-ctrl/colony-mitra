@@ -279,24 +279,117 @@ async function makeThumb(files, current) {
    ============================================================ */
 function allShops() {
   const list = Object.values(DATA.shops || {});
-  // jiska code hai wo pehle (code ke hisaab se), phir naya business
+  /* code ke NUMBAR ke hisaab se — GC-01, GC - 07, GC 13 sab theek se */
   return list.sort((a, b) => {
-    const ca = a.code || "", cb = b.code || "";
-    if (ca && cb) return ca.localeCompare(cb, undefined, { numeric: true });
-    if (ca) return -1;
-    if (cb) return 1;
-    return (b.createdAt || 0) - (a.createdAt || 0);
+    const na = codeNum(a), nb = codeNum(b);
+    if (na !== null && nb !== null) return na - nb;
+    if (na !== null) return -1;
+    if (nb !== null) return 1;
+    return (a.name || "").localeCompare(b.name || "");
   });
+}
+
+/* code se sirf number nikalo — "GC - 07" se 7, "GC 13" se 13 */
+function codeNum(s) {
+  const m = String((s && s.code) || "").match(/(\d+)/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+/* har code ko ek hi format me laao — GC-001 */
+function normCode(c) {
+  const m = String(c || "").match(/(\d+)/);
+  return m ? "GC-" + String(parseInt(m[1], 10)).padStart(3, "0") : String(c || "").trim();
 }
 
 /* agla apne aap number — GC-001, GC-002 ... */
 function nextCode() {
   const used = Object.values(DATA.shops || {})
-    .map(s => String(s.code || ""))
-    .filter(c => /^GC-?\d+$/i.test(c))
-    .map(c => parseInt(c.replace(/\D/g, ""), 10));
+    .map(s => codeNum(s))
+    .filter(n => n !== null);
   const n = (used.length ? Math.max(...used) : 0) + 1;
   return "GC-" + String(n).padStart(3, "0");
+}
+
+/* ============================================================
+   CATEGORY GROUPING
+   "Baby Setting" aur "Baby Sitting" alag-alag chip ban rahe the.
+   Ab dono EK hi category — click karne par dono dikhenge.
+   ============================================================ */
+const CAT_FIX = {
+  "baby setting": "Baby Sitting", "babysetting": "Baby Sitting",
+  "baby setting & products": "Baby Sitting", "baby products": "Baby Sitting",
+  "baby care": "Baby Sitting", "baby sitting": "Baby Sitting",
+  "baby siting": "Baby Sitting", "babysitting": "Baby Sitting",
+
+  "ladies tailor": "Ladies Tailor", "ladies tailors": "Ladies Tailor",
+  "ladies tailoring": "Ladies Tailor", "tailor": "Ladies Tailor",
+  "tailors": "Ladies Tailor", "ladies boutique": "Ladies Tailor",
+
+  "saloon/beauty": "Saloon / Beauty", "saloon /beauty": "Saloon / Beauty",
+  "saloon and beauty": "Saloon / Beauty", "beauty parlour": "Saloon / Beauty",
+  "beauty salon": "Saloon / Beauty", "salon": "Saloon / Beauty",
+
+  "jewellery": "Jewellery", "jewellers": "Jewellery", "jewellers ": "Jewellery",
+
+  "groceries and diary": "Groceries & Dairy", "groceries & dairy": "Groceries & Dairy",
+  "grocery": "Groceries & Dairy", "kirana": "Groceries & Dairy",
+  "kirana and dairy": "Groceries & Dairy", "general store": "Groceries & Dairy",
+
+  "cloth/garments": "Cloth / Garments", "cloth and garments": "Cloth / Garments",
+  "clothes": "Cloth / Garments", "garments": "Cloth / Garments",
+  "readymade garments": "Cloth / Garments",
+
+  "coaching": "Coaching", "coaching classes": "Coaching",
+  "classes": "Coaching", "tuition": "Coaching", "coaching class": "Coaching",
+
+  "chadar": "Chadar / Bed Linen", "chadar bedding": "Chadar / Bed Linen",
+  "bed linen": "Chadar / Bed Linen", "chadar and pillow": "Chadar / Bed Linen",
+
+  "sarees": "Sarees", "saree": "Sarees", "saree shop": "Sarees",
+  "saree and dress": "Sarees",
+
+  "bakery": "Bakery", "cake": "Bakery", "cake shop": "Bakery",
+  "bakery and cake": "Bakery",
+
+  "rangoli": "Rangoli", "rangoli and pipe cleaner": "Rangoli",
+  "household": "Household", "house keeping": "Household"
+};
+
+function catKey(c) {
+  return String(c || "").trim().toLowerCase()
+    .replace(/\s*\/\s*/g, "/").replace(/\s+/g, " ");
+}
+function canonCat(c) {
+  const k = catKey(c);
+  if (!k) return "";
+  return CAT_FIX[k] || String(c).trim().replace(/\s+/g, " ");
+}
+function sameCat(a, b) {
+  const x = canonCat(a);
+  return !!x && x === canonCat(b);
+}
+
+/* sirf admin: sabhi codes GC-001 format me theek karo */
+async function fixAllCodes() {
+  if (!unlocked) return toast("🔒 Sirf admin");
+  const list = allShops();
+  const used = new Set();
+  let n = 0, changed = 0;
+  for (const s of list) {
+    while (used.has("GC-" + String(n + 1).padStart(3, "0"))) n++;
+    n++;
+    const want = "GC-" + String(n).padStart(3, "0");
+    used.add(want);
+    if (String(s.code || "").trim() !== want) {
+      if (FB_DB) await FB_DB.ref("shops/" + s.id + "/code").set(want).catch(() => {});
+      else { s.code = want; saveLocal(); }
+      changed++;
+    }
+  }
+  render();
+  toast(changed
+    ? "✅ " + changed + " codes ठीक हो गए (GC-001 …)"
+    : "✅ सारे codes पहले से ठीक हैं");
 }
 
 /* ---------- LOCAL → CLOUD MIGRATION ---------- */
@@ -418,12 +511,24 @@ function renderEmAdmin() {
 }
 
 function renderChips() {
-  const cats = [...new Set(allShops().map(s => s.cat).filter(Boolean))].sort();
+  /* ek jaisi categories ko jodo — "Baby Setting" + "Baby Sitting" = 1 chip */
+  const seen = new Map();
+  allShops().forEach(s => {
+    const c = canonCat(s.cat);
+    if (c) seen.set(c, (seen.get(c) || 0) + 1);
+  });
+  const cats = [...seen.keys()].sort();
+
+  /* agar abhi jo chip chuna hai wo ab nahi hai to reset */
+  if (cat !== "all" && !cats.includes(cat)) cat = "all";
+
   const box = $("#catChips");
-  box.innerHTML = ["all", ...cats].map(c =>
-    `<button class="chip ${cat === c ? "on" : ""}" data-c="${esc(c)}">
-      ${c === "all" ? "✨ Sab" : esc(c)}
-     </button>`).join("");
+  box.innerHTML = ["all", ...cats].map(c => {
+    const n = seen.get(c) || 0;
+    return `<button class="chip ${cat === c ? "on" : ""}" data-c="${esc(c)}">
+      ${c === "all" ? "✨ Sab" : esc(c)}${n > 1 ? `<b class="cnt">${n}</b>` : ""}
+     </button>`;
+  }).join("");
 }
 
 function renderShops() {
@@ -432,7 +537,7 @@ function renderShops() {
 
   const q = query.toLowerCase();
   const list = allShops().filter(s => {
-    const okCat = cat === "all" || s.cat === cat;
+    const okCat = cat === "all" || sameCat(s.cat, cat);
     const txt = (s.name + " " + s.cat + " " + s.desc + " " +
       (s.items || []).map(i => i.name + " " + i.cat).join(" ")
     ).toLowerCase();
@@ -457,10 +562,10 @@ function renderShops() {
     return `<article class="shop" data-id="${s.id}">
       <div class="picwrap">
         ${img ? `<img class="pic" src="${img}" alt="" loading="lazy" decoding="async">` : `<div class="pic">🏪</div>`}
-        ${s.code ? `<span class="code">${esc(s.code)}</span>` : ""}
+        ${s.code ? `<span class="code">${esc(normCode(s.code))}</span>` : ""}
       </div>
       <h3>${esc(s.name)}</h3>
-      ${s.cat ? `<span class="cat">${esc(s.cat)}</span>` : ""}
+      ${s.cat ? `<span class="cat">${esc(canonCat(s.cat))}</span>` : ""}
       <div class="badges">${badges.join("")}</div>
       ${s.desc ? `<p class="desc">${esc(s.desc)}</p>` : ""}
       ${r.n ? `<div class="rating">${starRow(r.avg)} <b>${r.avg}</b> (${r.n})</div>`
@@ -524,8 +629,8 @@ function openShop(id) {
 
     <h2>${esc(s.name)}</h2>
     <div class="meta">
-      ${s.code ? "🔢 Shop Code: <b>" + esc(s.code) + "</b><br>" : ""}
-      ${s.cat ? "🏷️ " + esc(s.cat) + "<br>" : ""}
+      ${s.code ? "🔢 Shop Code: <b>" + esc(normCode(s.code)) + "</b><br>" : ""}
+      ${s.cat ? "🏷️ " + esc(canonCat(s.cat)) + "<br>" : ""}
       ${s.addr ? "📍 " + esc(s.addr) + "<br>" : ""}
       ${s.time ? "🕐 " + esc(s.time) + "<br>" : ""}
       ${s.phone ? "📞 " + esc(s.phone) : ""}
@@ -1558,6 +1663,13 @@ function init() {
   };
   const dab = $("#delAllPhotos");
   if (dab) dab.onclick = delAllPhotos;
+
+  // shop codes theek karo (admin only)
+  $("#fixCodes").onclick = () => {
+    if (!unlocked) return toast("🔒 Pehle admin login karo");
+    if (!confirm("Sabhi shop codes ko GC-001, GC-002 … format me theek karun?\n\nBusiness ka naam, photo, number — kuch nahi badlega.")) return;
+    fixAllCodes();
+  };
 
   // updates delete (admin only)
   $("#updateList").onclick = e => {

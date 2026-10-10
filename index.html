@@ -8,10 +8,10 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v27">
+<link rel="stylesheet" href="style.css?v28">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v27"></script>
+<script src="firebase-config.js?v28"></script>
 </head>
 <body>
 
@@ -123,6 +123,17 @@
       <div class="row">
         <button class="btn" id="logoSave">💾 Logo badlo</button>
         <button class="btn ghost" id="logoReset">↩️ Default</button>
+      </div>
+    </div>
+
+    <div class="card admin-tools">
+      <div class="at-row">
+        <div class="at-txt">
+          <b>🔢 Shop Code ठीक करो</b>
+          <span>GC-01, GC - 07, GC 13 — sabhi ko <b>GC-001 …</b> format me set karo
+          aur list code ke hisaab se order hogi</span>
+        </div>
+        <button type="button" class="btn primary" id="fixCodes">🔧 Codes ठीक करो</button>
       </div>
     </div>
 
@@ -286,6 +297,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="app.js?v27"></script>
+<script src="app.js?v28"></script>
 </body>
 </html>

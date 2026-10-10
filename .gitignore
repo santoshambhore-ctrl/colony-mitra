@@ -35,4 +35,7 @@ desktop.ini
 # ---- editors ----
 .vscode/
 .idea/
-*.swp
+*.swp# ---- backup: sirf latest rakho, dated history bahar ----
+backup/*-20*.json
+backup/*-20*.html
+backup/*-20*.csv

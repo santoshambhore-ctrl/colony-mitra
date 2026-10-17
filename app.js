@@ -1512,7 +1512,24 @@ const LAUNCH_AT = Date.parse("2026-10-17T00:00:00+05:30");  // AAJ — abhi se s
 /* Note: aaj = 20 october 2026 maana jaata hai (launch day) */
 let LAUNCH_FORCE = false;          // admin test — date check chhodo
 const LAUNCH_TILL = Date.parse("2026-10-31T23:59:59+05:30");
-const LM_KEY = "cm_launch_seen";
+const LM_KEY = "cm_lm_v2";           // नया key — पुराना छिपा हुआ flag ignore
+const LM_HIDE_HRS = 12;              // बंद करने पर 12 घंटे छुपा रहेगा, फिर दिखेगा
+
+/* छिपा हुआ है या नहीं — पर 12 घंटे बाद फिर दिखेगा
+   (पुराना तरीका permanent छुपा देता था — इसीले किसी को कभी नहीं दिखता था) */
+function lmHidden() {
+  try {
+    const t = Number(localStorage.getItem(LM_KEY)) || 0;
+    if (!t) return false;
+    return (Date.now() - t) < LM_HIDE_HRS * 36e5;
+  } catch (e) { return false; }
+}
+function lmHide() {
+  try { localStorage.setItem(LM_KEY, String(Date.now())); } catch (e) {}
+}
+function lmClear() {
+  try { localStorage.removeItem(LM_KEY); } catch (e) {}
+}
 
 function launchBanner() {
   const box = $("#launchBanner");
@@ -1521,14 +1538,11 @@ function launchBanner() {
 
   /* admin ne "abhi dikhao" daba hai? — tab date chhodo */
   if (!LAUNCH_FORCE) {
-    /* 20 Oct 8:00 बजे से पहले — नहीं दिखेगा */
     if (now < LAUNCH_AT) { box.hidden = true; return; }
-    /* 27 Oct के बाद हट जाएगा (1 हफ्ते का message) */
     if (now > LAUNCH_TILL) { box.hidden = true; return; }
   }
 
-  /* user ने बंद किया तो दोबारा नहीं दिखेगा */
-  if (localStorage.getItem(LM_KEY) === "1") { box.hidden = true; return; }
+  if (lmHidden()) { box.hidden = true; return; }
 
   box.hidden = false;
 }
@@ -1537,25 +1551,31 @@ function initLaunchBanner() {
   launchBanner();
   const x = $("#lmClose");
   if (x) x.onclick = () => {
-    try { localStorage.setItem(LM_KEY, "1"); } catch (e) {}
+    lmHide();
     const box = $("#launchBanner");
     if (box) box.hidden = true;
-    toast("📌 बंद केले — पुन्हा दिसणार नाही");
+    renderLaunchStatus();
+    toast("📌 १२ तास लपलंय — नंतर पुन्हा दिसेल");
   };
-  /* खुला रहा तो 8 बजे आपोआप दिखे */
   setInterval(launchBanner, 30000);
+  /* tab बदलने पर भी check (phone unlock करते ही) */
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) launchBanner();
+  });
 }
 
 /* पूछें नहीं जानते — "दिसतोय का?" जाँच बटन (admin साठी handy) */
 function launchStatus() {
-  if (LAUNCH_FORCE) return "👁 फक्त माझ्या फोनवर दिसतोय (बाकी सबकडे बघत नाहीत)";
+  if (LAUNCH_FORCE) return "👁 जरूर दाखवतोय (तुमच्यावरच)";
   const now = Date.now();
-  if (localStorage.getItem(LM_KEY) === "1") return "🙈 तुम्ही बंद केलंय — फक्त तुमच्यासाठी लपलंय";
   if (now < LAUNCH_AT)  return "⏳ Banner " + Math.max(1, Math.round((LAUNCH_AT - now) / 36e5)) + " तासांमध्ये येतो";
   if (now > LAUNCH_TILL) return "⌛ Banner संपला";
+  if (lmHidden()) {
+    let left = Math.ceil((LM_HIDE_HRS * 36e5 - (now - Number(localStorage.getItem(LM_KEY) || 0))) / 36e5);
+    return "🙈 तुम्ही बंद केलंय — " + Math.max(1, left) + " तासांनी पुन्हा दिसेल";
+  }
   const days = Math.ceil((LAUNCH_TILL - now) / 864e5);
-  return "🎉 सबकडे दिसत आहे — " + days + " दिवसांनी आपोआप हटेल (" +
-    new Date(LAUNCH_TILL).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) + "पर्यंत)";
+  return "🎉 सबकडे दिसत आहे — " + days + " दिवसांनी आपोआप हटेल";
 }
 
 function renderLaunchStatus() {
@@ -1956,26 +1976,25 @@ function init() {
   // launch banner — admin test buttons
   const tl = $("#testLaunch");
   if (tl) tl.onclick = () => {
-    LAUNCH_FORCE = true;                      // ← date check bypass
-    try { localStorage.removeItem(LM_KEY); } catch (e) {}
+    LAUNCH_FORCE = true;
+    lmClear();                                // ← purana flag bhi mitao
     launchBanner();
     switchTab("home");
     window.scrollTo({ top: 0, behavior: "smooth" });
+    renderLaunchStatus();
     const box = $("#launchBanner");
-    if (box && box.hidden) {
-      toast("⚠️ अजून दिसत नाही — App बंद करके पुन्हा उघडा");
-    } else {
-      toast("🎉 बॅनर दिसतोय — टेस्ट केला");
-    }
+    toast(box && !box.hidden
+      ? "🎉 बॅनर दिसतोय!"
+      : "⚠️ अजून दिसत नाही — App बंद करके पुन्हा उघडा");
   };
   const rl = $("#resetLaunch");
   if (rl) rl.onclick = () => {
     LAUNCH_FORCE = false;
-    try { localStorage.setItem(LM_KEY, "1"); } catch (e) {}
+    lmHide();
     const box = $("#launchBanner");
     if (box) box.hidden = true;
     renderLaunchStatus();
-    toast("⌛ बॅनर लपला — 20 Oct ला येईल");
+    toast("🙈 १२ तासासाठी लपलंय");
   };
   renderLaunchStatus();
 

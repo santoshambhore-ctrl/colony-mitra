@@ -8,10 +8,10 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v35">
+<link rel="stylesheet" href="style.css?v36">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v35"></script>
+<script src="firebase-config.js?v36"></script>
 </head>
 <body>
 
@@ -224,18 +224,25 @@
     </div>
 
     <div class="card">
-      <h2>📢 Naya Update daalo</h2>
+      <h2>📢 Naya Update / Offer daalo</h2>
       <form id="updateForm">
-        <label>Message</label>
-        <textarea id="uText" rows="3" placeholder="Sharma Store par aaj 20% off hai!" required></textarea>
+        <label>Message *</label>
+        <textarea id="uText" rows="3" placeholder="जूने फर्निचर विक्री — सोफा, बेड, अलमारी, चांदी. भाव नगर." required></textarea>
         <label>Type</label>
         <select id="uType">
           <option value="offer">🎁 Offer</option>
+          <option value="sale">🪑 जूने सामान / विक्री</option>
+          <option value="property">🏠 Property भाडा / विक्री</option>
           <option value="new">🆕 Naya Business</option>
+          <option value="event">🎉 कार्यक्रम / सभा</option>
           <option value="notice">📌 Notice</option>
         </select>
-        <label>Photo (optional)</label>
-        <input type="file" id="uPhoto" accept="image/*">
+        <label>Photos (optional — 4 पर्यंत)</label>
+        <input type="file" id="uPhoto" accept="image/*" multiple>
+        <div class="hint">जूने सामान दिखाने के लिए 2-3 photos डालें — ज़्यादा अच्छा दिखता है</div>
+        <label>संपर्क नंबर (optional — खरीदार आपको call कर सके)</label>
+        <input id="uContact" type="tel" inputmode="numeric" placeholder="93229 14810">
+        <div class="hint">सिर्फ यहीं दिखेगा — post पर Call / WhatsApp बटन आ जाएंगे</div>
         <button type="submit" class="btn primary">Post karo</button>
       </form>
     </div>
@@ -304,6 +311,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="app.js?v35"></script>
+<script src="app.js?v36"></script>
 </body>
 </html>

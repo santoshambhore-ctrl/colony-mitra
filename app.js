@@ -593,16 +593,37 @@ function renderUpdates() {
 
   $("#updatesEmpty").style.display = list.length ? "none" : "block";
 
-  const tag = { offer: ["🎁 Offer", "#f59e0b"], new: ["🆕 Naya Business", "#2563eb"],
-                notice: ["📌 Notice", "#6b7280"] };
+  const tag = { offer:     ["🎁 Offer",                    "#f59e0b"],
+                sale:      ["🪑 जूने सामान / विक्री",        "#7c3aed"],
+                property:  ["🏠 Property",                  "#0891b2"],
+                new:       ["🆕 Naya Business",             "#2563eb"],
+                event:     ["🎉 कार्यक्रम / सभा",           "#db2777"],
+                notice:    ["📌 Notice",                    "#6b7280"] };
 
   $("#updateList").innerHTML = list.map(u => {
     const [label, color] = tag[u.type] || tag.notice;
+
+    /* photos — naya format (photos[]) + purana (photo) dono */
+    const shots = (u.photos && u.photos.length) ? u.photos
+                : (u.photo ? [u.photo] : []);
+    const gallery = shots.length
+      ? `<div class="upgal ${shots.length > 1 ? "multi" : ""}">` +
+        shots.map(p => `<img src="${p}" alt="" loading="lazy">`).join("") + `</div>`
+      : "";
+
+    /* contact — sirf 10 digit */
+    const num = String(u.contact || "").replace(/[^\d]/g, "");
+    const acts = num.length === 10 ? `<div class="upact">
+        <a class="act act-call" href="tel:+${num}">📞 Call</a>
+        <a class="act act-wa" href="https://wa.me/${num}" target="_blank" rel="noopener">💬 WhatsApp</a>
+      </div>` : "";
+
     return `<div class="post">
       ${unlocked ? `<button class="del-post" data-updel="${esc(u.id)}" title="Delete">✕</button>` : ""}
       <span class="tag" style="color:${color}">${label}</span>
       <p>${esc(u.text)}</p>
-      ${u.photo ? `<img src="${u.photo}" alt="">` : ""}
+      ${gallery}
+      ${acts}
       <div class="date">${fmtTime(u.ts)}</div>
     </div>`;
   }).join("");
@@ -1822,11 +1843,26 @@ function init() {
     e.preventDefault();
     const text = $("#uText").value.trim();
     if (!text) return;
-    let photo = null;
-    if ($("#uPhoto").files[0]) {
-      await handleFiles([$("#uPhoto").files[0]], r => photo = r[0] || null);
+
+    /* photos — 4 tak */
+    let photos = [];
+    const files = $("#uPhoto").files;
+    if (files && files.length) {
+      toast("📸 Photos upload ho rahi hain…");
+      await handleFiles([...files].slice(0, 4), r => photos = r || []);
     }
-    write("updates/u" + Date.now(), { text, type: $("#uType").value, photo, ts: Date.now() });
+
+    /* contact — sirf 10 digit, +91 bina */
+    const contact = $("#uContact").value.replace(/[^\d]/g, "").slice(0, 10);
+
+    write("updates/u" + Date.now(), {
+      text,
+      type: $("#uType").value,
+      photo:  photos[0] || null,      /* purane posts ke liye */
+      photos: photos.length ? photos : null,
+      contact: /^\d{10}$/.test(contact) ? contact : null,
+      ts: Date.now()
+    });
     e.target.reset();
     toast("📢 Post ho gaya — sabko dikhega");
   };

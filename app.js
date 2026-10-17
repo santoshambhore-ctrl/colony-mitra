@@ -1509,8 +1509,9 @@ async function delShop(id) {
    आज 21 Oct है तो भी दिखेगा (कुछ देर बाद तक)
    ============================================================ */
 const LAUNCH_AT = Date.parse("2026-10-17T00:00:00+05:30");  // AAJ — abhi se sabko dikhega
+/* Note: aaj = 20 october 2026 maana jaata hai (launch day) */
 let LAUNCH_FORCE = false;          // admin test — date check chhodo
-const LAUNCH_TILL = Date.parse("2026-10-27T23:59:59+05:30");
+const LAUNCH_TILL = Date.parse("2026-10-31T23:59:59+05:30");
 const LM_KEY = "cm_launch_seen";
 
 function launchBanner() {

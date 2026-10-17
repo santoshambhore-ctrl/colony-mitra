@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<title>Colony Mitra — QR Poster</title>
+<link rel="stylesheet" href="mr.css">
+<style>
+  /* fixed A4 page */
+  body { height: 297mm; overflow: hidden; padding: 10mm 11mm;
+         display:flex; flex-direction:column; }
+
+  .top{
+    text-align:center; border-radius:14px; padding:16px 18px 15px;
+    background:linear-gradient(135deg,#0f766e,#14b8a6); color:#fff;
+    box-shadow:0 4px 14px rgba(15,118,110,.28);
+  }
+  .top .kick{
+    display:inline-block; background:rgba(255,255,255,.24);
+    padding:3px 15px; border-radius:99px; font-weight:bold;
+    font-size:10pt; margin-bottom:8px;
+  }
+  .top h1{ margin:0; font-size:26pt; font-weight:800; line-height:1.14; color:#fff; }
+  .top .s{ font-size:11pt; opacity:.95; margin-top:5px; }
+
+  /* ---- main body: QR left, steps right ---- */
+  .main{ display:flex; gap:16px; margin-top:14px; flex:1; min-height:0; }
+
+  .qrbox{
+    flex:0 0 96mm; text-align:center;
+    background:#fff; border:2.5px solid #0f766e; border-radius:14px;
+    padding:14px 14px 12px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+  }
+  .qrbox img{ width:100%; max-width:78mm; height:auto; image-rendering:pixelated; }
+  .qrbox .scan{
+    margin-top:9px; font-size:12.5pt; font-weight:800; color:#0f766e;
+  }
+  .qrbox .url{
+    margin-top:3px; font-size:9.6pt; color:#0f766e; font-weight:700;
+    background:#ecfdf5; border-radius:6px; padding:4px 11px; margin-top:7px;
+  }
+
+  .side{ flex:1; min-width:0; display:flex; flex-direction:column; }
+
+  .steps .st{
+    display:flex; gap:10px; align-items:flex-start; margin-bottom:8px;
+    background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px;
+    padding:8px 11px;
+  }
+  .steps .st .n{
+    flex-shrink:0; width:23px; height:23px; border-radius:50%;
+    background:#16a34a; color:#fff; text-align:center; line-height:23px;
+    font-weight:800; font-size:11pt;
+  }
+  .steps .st b{ font-size:10.6pt; color:#14532d; }
+  .steps .st div span{ font-size:9.4pt; color:#4b5563; }
+
+  .safe{
+    background:#fffbeb; border:1.5px solid #fde68a; border-left:5px solid #f59e0b;
+    border-radius:10px; padding:9px 13px; margin-top:3px;
+    font-size:9.4pt; line-height:1.5;
+  }
+  .safe b{ color:#b45309; }
+
+  .feats{
+    display:grid; grid-template-columns:1fr 1fr; gap:5px 7px; margin-top:9px;
+  }
+  .feats > div{
+    display:grid; grid-template-columns:22px 1fr; align-items:center;
+    gap:0 7px; background:#fff; border:1px solid #ccfbf1;
+    border-radius:8px; padding:6px 9px; line-height:1.3;
+  }
+  .feats b{ font-size:13pt; grid-row:1 / span 2; }
+  .feats div{ font-size:9.6pt; font-weight:700; color:#0f766e; }
+  .feats small{ font-size:8.4pt; color:#64748b; font-weight:400; }
+
+  .foot{
+    margin-top:12px; background:#0f172a; border-radius:11px;
+    padding:11px 15px; text-align:center;
+  }
+  .foot .t{ font-size:12pt; font-weight:800; color:#7dd3fc; }
+  .foot .s{ font-size:9.4pt; color:#cbd5e1; margin-top:3px; line-height:1.45; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="kick">सरकारी कॉलनी, घाटकोपर ईस्ट</div>
+  <h1>🏘️ Colony Mitra App</h1>
+  <div class="s">कॉलनीतील सगळ्या व्यवसायांची माहिती — एका ठिकाणी</div>
+</div>
+
+<div class="main">
+
+  <!-- ============ QR ============ -->
+  <div class="qrbox">
+    <img src="qr-app.png" alt="QR code">
+    <div class="scan">📱 कॅमेरा फोनचा वापरा</div>
+    <div class="url">https://govt-colony.web.app</div>
+  </div>
+
+  <!-- ============ steps ============ -->
+  <div class="side">
+    <div class="steps">
+      <div class="st"><div class="n">1</div><div><b>QR स्कॅन करा</b><br>
+        <span>कॅमेरा उघडा आणि वरचा QR कोड फ्राममध्ये धरा</span></div></div>
+
+      <div class="st"><div class="n">2</div><div><b>App उघडेल</b><br>
+        <span>App आपोआप Chrome मध्ये उघडेल</span></div></div>
+
+      <div class="st"><div class="n">3</div><div><b>Install करा</b><br>
+        <span><b>Android:</b> ⋮ मेनू → <b>"Install app"</b><br>
+        <b>iPhone:</b> Share ⬆️ → <b>"Add to Home Screen"</b></span></div></div>
+
+      <div class="st"><div class="n">4</div><div><b>बस! 🏠</b><br>
+        <span>फोनच्या मुख्य स्क्रीनवर Colony Mitra चा icon दिसेल</span></div></div>
+    </div>
+
+    <div class="safe">
+      <b>🔒 कोणी फसवू शकत नाही</b><br>
+      • App <b>पूर्णपणे विनामूल्य</b> — एक रुपयाही charge नाही.<br>
+      • फक्त व्यवसायाचे नाव, नंबर, फोटो व दर दिसते.<br>
+      • कोणतेही खाते (login) किंवा OTP लागत नाही.<br>
+      • फक्त आपल्या कॉलनीसाठी बनवलेले App.
+    </div>
+
+    <div class="feats">
+      <div><b>🏪</b>सगळ्या व्यवसायांची नोंद<small>नाव, नंबर, फोटो</small></div>
+      <div><b>📦</b>सामान आणि दर<small>काय विकते, किती दर</small></div>
+      <div><b>💬</b>थेट WhatsApp<small>एका टॅपवर बोला</small></div>
+      <div><b>📞</b>थेट Call<small>नंबर एक टॅपवर</small></div>
+      <div><b>🔍</b>शोधणे सोपे<small>"सब्जी", "दूध" लिहा</small></div>
+      <div><b>⭐</b>ग्राहकांचे अभिप्राय<small>कॉलनीतील लोकांचा अनुभव</small></div>
+      <div><b>🚨</b>Emergency नंबर<small>पोलीस, रुग्णवाहिका, गार्ड</small></div>
+      <div><b>📢</b>ऑफर आणि सूचना<small>सवलत, नवीन व्यवसाय</small></div>
+    </div>
+
+    <div class="foot" style="margin-top:auto">
+      <div class="t">दुकान नोंदणी — शेवटची तारीख १८ ऑक्टोबर</div>
+      <div class="s">
+        फॉर्म भरून office मध्ये द्या &nbsp;•&nbsp;
+        संपर्क: संतोष 81088 08281
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

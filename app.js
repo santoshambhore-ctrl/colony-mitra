@@ -1508,7 +1508,7 @@ async function delShop(id) {
    🎉 LAUNCH MESSAGE  —  20 Oct 2026, सुबह 8:00 बजे से दिखेगा
    आज 21 Oct है तो भी दिखेगा (कुछ देर बाद तक)
    ============================================================ */
-const LAUNCH_AT = Date.parse("2026-10-20T08:00:00+05:30");  // IST
+const LAUNCH_AT = Date.parse("2026-10-17T00:00:00+05:30");  // AAJ — abhi se sabko dikhega
 let LAUNCH_FORCE = false;          // admin test — date check chhodo
 const LAUNCH_TILL = Date.parse("2026-10-27T23:59:59+05:30");
 const LM_KEY = "cm_launch_seen";
@@ -1540,7 +1540,6 @@ function initLaunchBanner() {
     const box = $("#launchBanner");
     if (box) box.hidden = true;
     toast("📌 बंद केले — पुन्हा दिसणार नाही");
-    renderLaunchStatus();
   };
   /* खुला रहा तो 8 बजे आपोआप दिखे */
   setInterval(launchBanner, 30000);
@@ -1548,13 +1547,14 @@ function initLaunchBanner() {
 
 /* पूछें नहीं जानते — "दिसतोय का?" जाँच बटन (admin साठी handy) */
 function launchStatus() {
-  if (LAUNCH_FORCE) return "👁 टेस्ट मोड चालू — बॅनर आता दिसतोय";
+  if (LAUNCH_FORCE) return "👁 फक्त माझ्या फोनवर दिसतोय (बाकी सबकडे बघत नाहीत)";
   const now = Date.now();
-  const d = Math.round((LAUNCH_AT - now) / 36e5);
-  if (now < LAUNCH_AT)  return "⏳ Banner " + (d > 48 ? Math.round(d / 24) + " दिवस" : d + " तास") + "मध्ये येतो";
+  if (localStorage.getItem(LM_KEY) === "1") return "🙈 तुम्ही बंद केलंय — फक्त तुमच्यासाठी लपलंय";
+  if (now < LAUNCH_AT)  return "⏳ Banner " + Math.max(1, Math.round((LAUNCH_AT - now) / 36e5)) + " तासांमध्ये येतो";
   if (now > LAUNCH_TILL) return "⌛ Banner संपला";
-  return "🎉 Banner चालू आहे (" +
-    new Date(LAUNCH_AT).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " पासून)";
+  const days = Math.ceil((LAUNCH_TILL - now) / 864e5);
+  return "🎉 सबकडे दिसत आहे — " + days + " दिवसांनी आपोआप हटेल (" +
+    new Date(LAUNCH_TILL).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) + "पर्यंत)";
 }
 
 function renderLaunchStatus() {

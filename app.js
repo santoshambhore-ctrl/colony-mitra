@@ -1474,9 +1474,10 @@ function showSyncSheet() {
   const nPh    = Object.keys(PHOTOS).length;
 
   $("#ssTitle").innerHTML = FB_DB
-    ? (online ? "☁️ Cloud — जुड़ा हुआ" : "📴 Offline — इंटरनेट नहीं")
-    : "📱 Local — सिर्फ इस फोन में";
+    ? (online ? "☁️ कॉलनी से जुड़ा है" : "📴 Offline — इंटरनेट नहीं")
+    : "📱 सिर्फ इस फोन में";
 
+  /* non-admin ko technical baat nahi — sirf kaam ki baat */
   $("#ssBody").innerHTML = `
     <div class="ss-grid">
       <div><b>${nShops}</b><span>Business</span></div>
@@ -1486,55 +1487,62 @@ function showSyncSheet() {
     </div>
 
     <div class="ss-rows">
-      <div><span>Data कहाँ है</span>
-        <b>${FB_DB ? "Firebase Cloud ☁️" : "इस फोन में 📱"}</b></div>
+      <div><span>जानकारी कहाँ से आती है</span>
+        <b>${FB_DB ? "कॉलनी के सर्वर से ☁️" : "इस फोन से 📱"}</b></div>
       <div><span>इंटरनेट</span>
         <b>${online ? "चालू ✅" : "बंद ❌"}</b></div>
-      <div><span>फोन पर offline copy</span>
-        <b>${nShops ? nShops + " Business (हमेशा कॉपी)" : "अभी नहीं"}</b></div>
-      <div><span>खुली photos (इस फोन में)</span>
-        <b>${nPh || "—"}</b></div>
       <div><span>आखिरी बदलाव</span>
         <b>${agoTime(LAST_SYNC)}</b></div>
+      ${unlocked ? `
+      <div><span>सर्वर (Firebase)</span><b>govt-colony ☁️</b></div>
+      <div><span>खुली photos (इस फोन में)</span><b>${nPh || "—"}</b></div>` : ""}
     </div>
 
     <div class="ss-msg">
       ${FB_DB
-        ? "☁️ हर बदलाव तुरंत Firebase में जाता है. फोन बदलें तो भी सब वापस मिलेगा."
-        : "📱 Cloud जुड़ा नहीं है. फोन के data पर्याप्त हैं — इंटरनेट आते ही sync हो जाएगा."}
+        ? "☁️ कोई नया Business, फोटो, दर या अपडेट आए तो यहाँ 👆 tap करके ताज़ा कर लो. इंटरनेट न हो तो भी पुराना data दिखता रहेगा."
+        : "📱 इंटरनेट आते ही अपने आप जुड़ जाएगा."}
     </div>
 
     <div class="ss-btns">
-      <button type="button" class="btn primary" id="ssRefresh">🔄 अभी refresh करो</button>
-      <button type="button" class="btn" id="ssBackup">⬇️ Backup लो</button>
-      ${unlocked ? `<button type="button" class="btn" id="ssStats">📊 Users</button>` : ""}
+      <button type="button" class="btn primary" id="ssRefresh">🔄 नया data लो</button>
+      ${unlocked
+        ? `<button type="button" class="btn" id="ssBackup">⬇️ Backup लो</button>
+           <button type="button" class="btn" id="ssStats">📊 Users</button>`
+        : `<button type="button" class="btn" id="ssShare">📤 Share करो</button>`}
     </div>`;
 
   sheet.hidden = false;
 
   $("#ssClose").onclick = () => { sheet.hidden = true; };
+
+  /* sirf padhne wala kaam — kuch bhi badalta nahi, safe */
   $("#ssRefresh").onclick = async () => {
-    $("#ssRefresh").textContent = "⏳ हो रहा है…";
+    const btn = $("#ssRefresh");
+    btn.disabled = true; btn.textContent = "⏳ आ रहा है…";
     try {
       if (FB_DB) {
-        const keys = ["shops", "updates", "reviews", "emergency", "app"];
-        for (const k of keys) {
+        for (const k of ["shops", "updates", "reviews", "emergency", "app"]) {
           const s = await FB_DB.ref(k).once("value");
           DATA[k] = s.val() || {};
         }
-        markSync();
-        saveLocal();
-        render();
+        markSync(); saveLocal(); render();
       }
-      toast("✅ Data ताज़ा हो गया");
-      $("#syncSheet").hidden = true;
+      toast("✅ नया data आ गया");
+      sheet.hidden = true;
     } catch (e) {
-      toast("⚠️ Refresh नहीं हुआ — इंटरनेट देखो");
+      toast("⚠️ नहीं आया — इंटरनेट देखो");
+    } finally {
+      btn.disabled = false; btn.textContent = "🔄 नया data लो";
     }
   };
-  $("#ssBackup").onclick = () => { sheet.hidden = true; exportData(); };
+
+  const bk = $("#ssBackup");
+  if (bk) bk.onclick = () => { sheet.hidden = true; exportData(); };
   const st = $("#ssStats");
   if (st) st.onclick = () => { sheet.hidden = true; switchTab("admin"); };
+  const sh = $("#ssShare");
+  if (sh) sh.onclick = () => { sheet.hidden = true; shareApp(); };
 }
 
 /* ---------- BACKUP ---------- */

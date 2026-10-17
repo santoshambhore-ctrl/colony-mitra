@@ -329,6 +329,10 @@ const CAT_FIX = {
   "saloon/beauty": "Saloon / Beauty", "saloon /beauty": "Saloon / Beauty",
   "saloon and beauty": "Saloon / Beauty", "beauty parlour": "Saloon / Beauty",
   "beauty salon": "Saloon / Beauty", "salon": "Saloon / Beauty",
+  "saloon/ beauty/mehandi": "Saloon / Beauty", "saloon/beauty/mehandi": "Saloon / Beauty",
+  "saloon beauty mehandi": "Saloon / Beauty", "mehandi": "Saloon / Beauty",
+  "mehndi": "Saloon / Beauty", "bridal": "Saloon / Beauty",
+  "makeover": "Saloon / Beauty", "beauty": "Saloon / Beauty",
 
   /* ज्वेलरी — spelling bahut alag log likhte hain, sab ek jodo */
   "jewellery": "Jewellery", "jewellers": "Jewellery", "jewellers ": "Jewellery",
@@ -341,22 +345,39 @@ const CAT_FIX = {
   "groceries and diary": "Groceries & Dairy", "groceries & dairy": "Groceries & Dairy",
   "grocery": "Groceries & Dairy", "kirana": "Groceries & Dairy",
   "kirana and dairy": "Groceries & Dairy", "general store": "Groceries & Dairy",
+  "kirana / grocery": "Groceries & Dairy", "kirana/grocery": "Groceries & Dairy",
+  "grocery and dairy": "Groceries & Dairy", "grocery shop": "Groceries & Dairy",
+  "kirana store": "Groceries & Dairy", "provision store": "Groceries & Dairy",
 
-  "cloth/garments": "Cloth / Garments", "cloth and garments": "Cloth / Garments",
-  "cloth": "Cloth / Garments", "clothes": "Cloth / Garments",
-  "clothing": "Cloth / Garments", "cloth and fashion": "Cloth / Garments",
-  "fashion": "Cloth / Garments", "fashion collection": "Cloth / Garments",
-  "clothes": "Cloth / Garments", "garments": "Cloth / Garments",
-  "readymade garments": "Cloth / Garments",
+  /* कपड़े + साडी + garment — सब एक ही category */
+  "cloth/garments": "Cloth / Saree / Garments", "cloth and garments": "Cloth / Saree / Garments",
+  "cloth": "Cloth / Saree / Garments", "clothes": "Cloth / Saree / Garments",
+  "clothing": "Cloth / Saree / Garments", "cloth and fashion": "Cloth / Saree / Garments",
+  "fashion": "Cloth / Saree / Garments", "fashion collection": "Cloth / Saree / Garments",
+  "garments": "Cloth / Saree / Garments", "readymade garments": "Cloth / Saree / Garments",
+  "sarees": "Cloth / Saree / Garments", "saree": "Cloth / Saree / Garments",
+  "saree shop": "Cloth / Saree / Garments", "saree and dress": "Cloth / Saree / Garments",
+  "saree collection": "Cloth / Saree / Garments", "saree and fashion": "Cloth / Saree / Garments",
+  "saree & dress": "Cloth / Saree / Garments", "saree boutique": "Cloth / Saree / Garments",
+  "saree and fashion collection": "Cloth / Saree / Garments",
+  "dress": "Cloth / Saree / Garments", "dress shop": "Cloth / Saree / Garments",
+  "suit": "Cloth / Saree / Garments", "kurti": "Cloth / Saree / Garments",
 
   "coaching": "Coaching", "coaching classes": "Coaching",
   "classes": "Coaching", "tuition": "Coaching", "coaching class": "Coaching",
+  "drawing and sketching": "Coaching", "drawing": "Coaching",
+  "sketching": "Coaching", "drawing classes": "Coaching",
+  "art classes": "Coaching", "sketching classes": "Coaching",
+  "home tutor": "Coaching", "tution": "Coaching", "tutor": "Coaching",
 
   "chadar": "Chadar / Bed Linen", "chadar bedding": "Chadar / Bed Linen",
   "bed linen": "Chadar / Bed Linen", "chadar and pillow": "Chadar / Bed Linen",
 
-  "sarees": "Sarees", "saree": "Sarees", "saree shop": "Sarees",
-  "saree and dress": "Sarees",
+  /* एक ही shop दो काम — दोनों category में दिखे */
+  "atta chakki": "Atta Chakki", "attachakki": "Atta Chakki",
+  "atta": "Atta Chakki", "chakki": "Atta Chakki",
+  "flour mill": "Atta Chakki", " atta chakki": "Atta Chakki",
+  "masala": "Masale", "spices": "Masale", "masale shop": "Masale",
 
   "bakery": "Bakery", "cake": "Bakery", "cake shop": "Bakery",
   "bakery and cake": "Bakery",

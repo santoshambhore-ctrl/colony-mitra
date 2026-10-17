@@ -330,13 +330,22 @@ const CAT_FIX = {
   "saloon and beauty": "Saloon / Beauty", "beauty parlour": "Saloon / Beauty",
   "beauty salon": "Saloon / Beauty", "salon": "Saloon / Beauty",
 
+  /* ज्वेलरी — spelling bahut alag log likhte hain, sab ek jodo */
   "jewellery": "Jewellery", "jewellers": "Jewellery", "jewellers ": "Jewellery",
+  "jwellery": "Jewellery", "jwelary": "Jewellery", "jewelery": "Jewellery",
+  "jwelley": "Jewellery", "jewellar": "Jewellery", "jewellery shop": "Jewellery",
+  "jwellery shop": "Jewellery", "imitation jewellery": "Jewellery",
+  "artificial jewellery": "Jewellery", "fashion jewellery": "Jewellery",
+  "jewelers": "Jewellery", "jewellery and accessories": "Jewellery",
 
   "groceries and diary": "Groceries & Dairy", "groceries & dairy": "Groceries & Dairy",
   "grocery": "Groceries & Dairy", "kirana": "Groceries & Dairy",
   "kirana and dairy": "Groceries & Dairy", "general store": "Groceries & Dairy",
 
   "cloth/garments": "Cloth / Garments", "cloth and garments": "Cloth / Garments",
+  "cloth": "Cloth / Garments", "clothes": "Cloth / Garments",
+  "clothing": "Cloth / Garments", "cloth and fashion": "Cloth / Garments",
+  "fashion": "Cloth / Garments", "fashion collection": "Cloth / Garments",
   "clothes": "Cloth / Garments", "garments": "Cloth / Garments",
   "readymade garments": "Cloth / Garments",
 
@@ -365,6 +374,22 @@ function canonCat(c) {
   if (!k) return "";
   return CAT_FIX[k] || String(c).trim().replace(/\s+/g, " ");
 }
+/* ---------------- EXISTING CATEGORIES: one-tap pick ----------------
+   Admin category khud type karta hai to spellings bigad jaati hain
+   ("Jewellery" vs "Jwellery" → 2 chips). Yahan tap karne se
+   bilkul wahi spelling lag jaati hai jo pehle se hai. */
+function renderCatPick() {
+  const box = $("#catPick");
+  if (!box) return;
+  const set = new Set();
+  allShops().forEach(s => catList(s.cat).forEach(c => set.add(c)));
+  const cats = [...set].sort();
+  if (!cats.length) { box.innerHTML = ""; return; }
+  box.innerHTML =
+    `<div class="cp-h">पहले से मौजूद:</div>` +
+    cats.map(c => `<button type="button" class="cp" data-cp="${esc(c)}">${esc(c)}</button>`).join("");
+}
+
 function sameCat(a, b) {
   return catList(a).includes(canonCat(b));
 }
@@ -543,20 +568,64 @@ function renderShops() {
   $("#areaName").textContent = "📍 " + SETTINGS.colony;
   document.title = SETTINGS.appName + " · " + SETTINGS.colony;
 
-  const q = query.toLowerCase();
-  const list = allShops().filter(s => {
-    const okCat = cat === "all" || catList(s.cat).includes(cat);
-    const txt = (s.name + " " + s.cat + " " + s.desc + " " +
-      (s.items || []).map(i => i.name + " " + i.cat).join(" ")
-    ).toLowerCase();
-    return okCat && (!q || txt.includes(q));
-  });
+  const q = query.toLowerCase().trim();
+
+  /* SEARCH TEXT — pehle sirf naam + raw category dekhta tha.
+     Isliye "jewellery" likhne par "Jwellery" wali shop nahi milti thi.
+     Ab canonical category, code, address aur price bhi dhoondhe jaata hai. */
+  const searchText = s => {
+    const bits = [s.name, normCode(s.code), s.desc, s.addr, s.time];
+    catList(s.cat).forEach(c => bits.push(c));          // merged/clean category
+    const items = Array.isArray(s.items) ? s.items : [];
+    items.forEach(i => {
+      if (i && typeof i === "object") bits.push(i.cat, i.name, i.price);
+    });
+    return bits.filter(x => x != null && x !== "").join(" ").toLowerCase();
+  };
+
+  let list;
+  try {
+    /* har shabd alag se match ho — "baby sitting" aur "sitting baby" dono */
+    const words = q ? q.split(/\s+/).filter(Boolean) : [];
+
+    /* pehle wahi shop jisme SAARE shabd hain */
+    let hit = allShops().filter(s => {
+      const t = searchText(s);
+      return words.every(w => t.includes(w));
+    });
+
+    /* ek shabd bhi na mile to kam se kam ek shabd wala dikhao */
+    if (!hit.length && words.length > 1) {
+      hit = allShops().filter(s => {
+        const t = searchText(s);
+        return words.some(w => t.includes(w));
+      });
+    }
+
+    list = hit.filter(s => cat === "all" || catList(s.cat).includes(cat));
+  } catch (e) {
+    /* ek kharab shop se poori list khaali ho gayi — sirf dikhao */
+    console.warn("[shops] filter:", e);
+    list = allShops();
+  }
 
   $("#shopCount").textContent = DATA.shops
     ? Object.keys(DATA.shops).length + " Business" : "0 Business";
 
   $("#homeEmpty").style.display = list.length ? "none" : "block";
-  if (!list.length && query) $("#homeEmpty").textContent = "Kuch nahi mila. Dusra word try karo.";
+  if (!list.length && query) {
+    const words = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    const hit = allShops().filter(s => {
+      const t = [s.name, s.desc].filter(Boolean).join(" ").toLowerCase();
+      return words.some(w => t.includes(w));
+    }).slice(0, 6);
+    $("#homeEmpty").innerHTML =
+      `<b>😕 "${esc(query)}" kuch nahi mila</b><br><br>` +
+      (hit.length
+        ? `Kya aap ye dhundh rahe ho?<br>` +
+          hit.map(s => `<div class="sug" data-go="${esc(s.id)}">🔍 ${esc(s.name)}</div>`).join("")
+        : `Shabd thoda chhota try karo — jaise <b>jewellery</b>, <b>cake</b>, <b>tailor</b>, <b>coaching</b>`);
+  }
 
   $("#shopList").innerHTML = list.map(s => {
     const badges = [];
@@ -1615,6 +1684,11 @@ function init() {
 
   // search + chips
   $("#search").oninput = e => { query = e.target.value; renderShops(); };
+  // "kuch nahi mila" ke suggestions par tap
+  $("#homeEmpty").onclick = e => {
+    const g = e.target.closest("[data-go]");
+    if (g) { openShop(g.getAttribute("data-go")); }
+  };
   $("#catChips").onclick = e => {
     const c = e.target.closest(".chip"); if (!c) return;
     cat = c.dataset.c; renderChips(); renderShops();
@@ -1872,6 +1946,23 @@ function init() {
 
   // cloud badge par tap -> data kahan hai, kitna hai, refresh + backup
   $("#syncBadge").onclick = showSyncSheet;
+
+  // category quick-pick — spelling galti na ho
+  const cpb = $("#catPick");
+  if (cpb) {
+    cpb.onclick = e => {
+      const b = e.target.closest("[data-cp]");
+      if (!b) return;
+      const cur = $("#fCategory").value.trim();
+      const pick = b.getAttribute("data-cp");
+      /* ek jaisi category dobara jod do — split aur jodo */
+      const parts = cur ? cur.split(",").map(x => canonCat(x)).filter(Boolean) : [];
+      if (!parts.includes(pick)) parts.push(pick);
+      $("#fCategory").value = [...new Set(parts)].join(", ");
+      toast("➕ " + pick + " जोड़ा");
+    };
+    renderCatPick();
+  }
   $("#importFile").onchange = e => {
     const f = e.target.files[0]; if (!f) return;
     const fr = new FileReader();

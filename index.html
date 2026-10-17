@@ -8,10 +8,10 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v37">
+<link rel="stylesheet" href="style.css?v39">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v37"></script>
+<script src="firebase-config.js?v39"></script>
 </head>
 <body>
 
@@ -147,6 +147,8 @@
 
         <label>Category</label>
         <input id="fCategory" list="catList" placeholder="e.g. Kirana, Salon, Clinic, Tailor">
+        <div class="hint">पहले से मौजूद category पर tap करो — spelling एक जैसी रहेगी, दोहरा नहीं बनेगा</div>
+        <div class="catpick" id="catPick"></div>
         <datalist id="catList">
           <option value="Kirana / Grocery"></option>
           <option value="Sabzi &amp; Fruit"></option>
@@ -305,6 +307,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="app.js?v37"></script>
+<script src="app.js?v39"></script>
 </body>
 </html>

@@ -277,6 +277,28 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:1
 .dbtn.get{background:var(--pri);color:#fff}
 .dbtn:active{opacity:.75}
 
+/* ---------- SEARCH: "kuch nahi mila" suggestions ---------- */
+#homeEmpty .sug{
+  display:inline-block;background:var(--card);border:1px solid var(--line);
+  border-radius:99px;padding:7px 13px;margin:5px 4px 0 0;
+  font-size:13px;font-weight:600;cursor:pointer;color:var(--txt);
+}
+#homeEmpty .sug:active{background:var(--pri);color:#fff}
+
+/* ---------- CATEGORY QUICK-PICK ---------- */
+.catpick{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.catpick:empty{display:none}
+.catpick .cp-h{
+  width:100%;font-size:10.5px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.3px;margin-bottom:1px;
+}
+.cp{
+  border:1.4px solid var(--pri);background:var(--card);color:var(--pri);
+  border-radius:99px;padding:5px 11px;font-size:11.5px;font-weight:700;cursor:pointer;
+}
+.cp:active{background:var(--pri);color:#fff}
+.cp.on{background:var(--pri);color:#fff}
+
 /* ---------- UNREAD UPDATES ---------- */
 .tab-badge{
   display:inline-block;min-width:17px;height:17px;padding:0 5px;

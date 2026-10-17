@@ -8,10 +8,10 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v30">
+<link rel="stylesheet" href="style.css?v31">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v30"></script>
+<script src="firebase-config.js?v31"></script>
 </head>
 <body>
 
@@ -22,8 +22,9 @@
       <h1>Colony Mitra</h1>
       <span id="areaName">📍 Govt Colony, Ghatkopar East</span>
     </div>
-    <span class="sync" id="syncBadge" title="Data kahan save ho raha hai">📱 Local</span>
+    <button type="button" class="sync" id="syncBadge" title="Tap karo — data kahan save hai">📱 Local</button>
   </div>
+  <button type="button" class="icon-btn" id="shareBtn" aria-label="Share" title="कॉलनी में Share करो">📤</button>
   <a class="icon-btn" href="./downloads.html" title="फाइल्स डाउनलोड" style="text-decoration:none;display:flex;align-items:center;justify-content:center;font-size:16px">📥</a>
   <button class="icon-btn" id="themeBtn" aria-label="Theme">🌙</button>
 </header>
@@ -52,6 +53,14 @@
     <input type="search" id="search" placeholder="🔍 Business ya kaam dhundho…" autocomplete="off">
   </div>
   <div class="chips" id="catChips"></div>
+  <div class="sync-sheet" id="syncSheet" hidden>
+    <div class="ss-head">
+      <b id="ssTitle">☁️ Cloud</b>
+      <button type="button" class="ss-x" id="ssClose">✕</button>
+    </div>
+    <div id="ssBody"></div>
+  </div>
+
   <div class="upd-strip" id="updStrip" hidden>
     <span class="us-ic">📢</span>
     <div class="us-txt">
@@ -297,6 +306,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="app.js?v30"></script>
+<script src="app.js?v31"></script>
 </body>
 </html>

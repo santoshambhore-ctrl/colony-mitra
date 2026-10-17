@@ -140,6 +140,7 @@ function sync() {
   ["shops", "updates", "reviews", "emergency", "app"].forEach(k => {
     root.child(k).on("value", snap => {
       DATA[k] = snap.val() || {};
+      markSync();
       saveLocal();          // offline copy
       render();
       if (k === "emergency") { renderEmAdmin(); renderQuickAdd(); }
@@ -1406,6 +1407,136 @@ async function delShop(id) {
   toast("🗑️ " + name + " delete ho gayi");
 }
 
+/* ============================================================
+   📤 SHARE  —  app apne aap aage failta rahe
+   ============================================================ */
+const SHARE_TEXT =
+  "नमस्कार! आपल्या कॉलनीसाठी Colony Mitra App सुरू झाला आहे. " +
+  "कॉलनीतील सगळ्या व्यवसायांची नाव, नंबर, फोटो, दर — सगळं एकाच ठिकाणी. " +
+  "पूर्णपणे FREE, कोणतेही charge नाही.\n\n👉 ";
+
+function shareApp() {
+  const url  = location.origin + "/";
+  const full = SHARE_TEXT + url;
+
+  trackShare();
+
+  /* 1) Native share menu (Android Chrome, iPhone Safari) */
+  if (navigator.share) {
+    navigator.share({
+      title: "Colony Mitra",
+      text:  SHARE_TEXT,
+      url
+    }).catch(() => {});          // user ne cancel kiya — kuch nahi
+    return;
+  }
+
+  /* 2) Fallback — WhatsApp khud kholo */
+  window.open("https://wa.me/?text=" + encodeURIComponent(full), "_blank");
+}
+
+/* kitne logon ne share kiya — sirf count, koi personal data nahi */
+function trackShare() {
+  try {
+    const k = "cm_shared";
+    const n = (Number(localStorage.getItem(k)) || 0) + 1;
+    localStorage.setItem(k, String(n));
+  } catch (e) { /* storage full */ }
+}
+
+/* ============================================================
+   CLOUD INFO  —  badge par tap karo to pata chale data kahan hai
+   ============================================================ */
+let LAST_SYNC = Number(localStorage.getItem("cm_last_sync")) || 0;
+
+function markSync() {
+  LAST_SYNC = Date.now();
+  localStorage.setItem("cm_last_sync", String(LAST_SYNC));
+}
+function agoTime(t) {
+  if (!t) return "अभी तक नहीं";
+  const s = Math.max(1, Math.round((Date.now() - t) / 1000));
+  if (s < 60) return s + " सेकंड पहले";
+  const m = Math.round(s / 60);
+  if (m < 60) return m + " मिनट पहले";
+  const h = Math.round(m / 60);
+  if (h < 24) return h + " घंटे पहले";
+  return Math.round(h / 24) + " दिन पहले";
+}
+
+function showSyncSheet() {
+  const sheet = $("#syncSheet");
+  const online = navigator.onLine;
+  const nShops = Object.keys(DATA.shops || {}).length;
+  const nUpd   = Object.keys(DATA.updates || {}).length;
+  const nEm    = Object.keys(DATA.emergency || {}).length;
+  const nRev   = Object.values(DATA.reviews || {}).reduce((s, r) => s + Object.keys(r || {}).length, 0);
+  const nPh    = Object.keys(PHOTOS).length;
+
+  $("#ssTitle").innerHTML = FB_DB
+    ? (online ? "☁️ Cloud — जुड़ा हुआ" : "📴 Offline — इंटरनेट नहीं")
+    : "📱 Local — सिर्फ इस फोन में";
+
+  $("#ssBody").innerHTML = `
+    <div class="ss-grid">
+      <div><b>${nShops}</b><span>Business</span></div>
+      <div><b>${nUpd}</b><span>Updates</span></div>
+      <div><b>${nEm}</b><span>Emergency</span></div>
+      <div><b>${nRev}</b><span>Reviews</span></div>
+    </div>
+
+    <div class="ss-rows">
+      <div><span>Data कहाँ है</span>
+        <b>${FB_DB ? "Firebase Cloud ☁️" : "इस फोन में 📱"}</b></div>
+      <div><span>इंटरनेट</span>
+        <b>${online ? "चालू ✅" : "बंद ❌"}</b></div>
+      <div><span>फोन पर offline copy</span>
+        <b>${nShops ? nShops + " Business (हमेशा कॉपी)" : "अभी नहीं"}</b></div>
+      <div><span>खुली photos (इस फोन में)</span>
+        <b>${nPh || "—"}</b></div>
+      <div><span>आखिरी बदलाव</span>
+        <b>${agoTime(LAST_SYNC)}</b></div>
+    </div>
+
+    <div class="ss-msg">
+      ${FB_DB
+        ? "☁️ हर बदलाव तुरंत Firebase में जाता है. फोन बदलें तो भी सब वापस मिलेगा."
+        : "📱 Cloud जुड़ा नहीं है. फोन के data पर्याप्त हैं — इंटरनेट आते ही sync हो जाएगा."}
+    </div>
+
+    <div class="ss-btns">
+      <button type="button" class="btn primary" id="ssRefresh">🔄 अभी refresh करो</button>
+      <button type="button" class="btn" id="ssBackup">⬇️ Backup लो</button>
+      ${unlocked ? `<button type="button" class="btn" id="ssStats">📊 Users</button>` : ""}
+    </div>`;
+
+  sheet.hidden = false;
+
+  $("#ssClose").onclick = () => { sheet.hidden = true; };
+  $("#ssRefresh").onclick = async () => {
+    $("#ssRefresh").textContent = "⏳ हो रहा है…";
+    try {
+      if (FB_DB) {
+        const keys = ["shops", "updates", "reviews", "emergency", "app"];
+        for (const k of keys) {
+          const s = await FB_DB.ref(k).once("value");
+          DATA[k] = s.val() || {};
+        }
+        markSync();
+        saveLocal();
+        render();
+      }
+      toast("✅ Data ताज़ा हो गया");
+      $("#syncSheet").hidden = true;
+    } catch (e) {
+      toast("⚠️ Refresh नहीं हुआ — इंटरनेट देखो");
+    }
+  };
+  $("#ssBackup").onclick = () => { sheet.hidden = true; exportData(); };
+  const st = $("#ssStats");
+  if (st) st.onclick = () => { sheet.hidden = true; switchTab("admin"); };
+}
+
 /* ---------- BACKUP ---------- */
 async function exportData() {
   const btn = $("#exportBtn");
@@ -1726,6 +1857,13 @@ function init() {
 
   // backup
   $("#exportBtn").onclick = exportData;
+
+  // cloud badge par tap -> data kahan hai, kitna hai, refresh + backup
+  $("#syncBadge").onclick = showSyncSheet;
+
+  // share button
+  const shb = $("#shareBtn");
+  if (shb) shb.onclick = shareApp;
   $("#importFile").onchange = e => {
     const f = e.target.files[0]; if (!f) return;
     const fr = new FileReader();

@@ -366,8 +366,16 @@ function canonCat(c) {
   return CAT_FIX[k] || String(c).trim().replace(/\s+/g, " ");
 }
 function sameCat(a, b) {
-  const x = canonCat(a);
-  return !!x && x === canonCat(b);
+  return catList(a).includes(canonCat(b));
+}
+
+/* ek shop ek se zyada category me ho sakti hai —
+   "Cloth / Garments, Jewellery"  →  dono chips me dikhega */
+function catList(c) {
+  const out = String(c || "").split(",")
+    .map(x => canonCat(x))
+    .filter(Boolean);
+  return [...new Set(out)];
 }
 
 /* sirf admin: sabhi codes GC-001 format me theek karo */
@@ -515,8 +523,7 @@ function renderChips() {
   /* ek jaisi categories ko jodo — "Baby Setting" + "Baby Sitting" = 1 chip */
   const seen = new Map();
   allShops().forEach(s => {
-    const c = canonCat(s.cat);
-    if (c) seen.set(c, (seen.get(c) || 0) + 1);
+    catList(s.cat).forEach(c => seen.set(c, (seen.get(c) || 0) + 1));
   });
   const cats = [...seen.keys()].sort();
 
@@ -538,7 +545,7 @@ function renderShops() {
 
   const q = query.toLowerCase();
   const list = allShops().filter(s => {
-    const okCat = cat === "all" || sameCat(s.cat, cat);
+    const okCat = cat === "all" || catList(s.cat).includes(cat);
     const txt = (s.name + " " + s.cat + " " + s.desc + " " +
       (s.items || []).map(i => i.name + " " + i.cat).join(" ")
     ).toLowerCase();
@@ -566,7 +573,7 @@ function renderShops() {
         ${s.code ? `<span class="code">${esc(normCode(s.code))}</span>` : ""}
       </div>
       <h3>${esc(s.name)}</h3>
-      ${s.cat ? `<span class="cat">${esc(canonCat(s.cat))}</span>` : ""}
+      ${s.cat ? catList(s.cat).map(c => `<span class="cat">${esc(c)}</span>`).join(" ") : ""}
       <div class="badges">${badges.join("")}</div>
       ${s.desc ? `<p class="desc">${esc(s.desc)}</p>` : ""}
       ${r.n ? `<div class="rating">${starRow(r.avg)} <b>${r.avg}</b> (${r.n})</div>`
@@ -631,7 +638,7 @@ function openShop(id) {
     <h2>${esc(s.name)}</h2>
     <div class="meta">
       ${s.code ? "🔢 Shop Code: <b>" + esc(normCode(s.code)) + "</b><br>" : ""}
-      ${s.cat ? "🏷️ " + esc(canonCat(s.cat)) + "<br>" : ""}
+      ${s.cat ? "🏷️ " + esc(catList(s.cat).join(" · ")) + "<br>" : ""}
       ${s.addr ? "📍 " + esc(s.addr) + "<br>" : ""}
       ${s.time ? "🕐 " + esc(s.time) + "<br>" : ""}
       ${s.phone ? "📞 " + esc(s.phone) : ""}

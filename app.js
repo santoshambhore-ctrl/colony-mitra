@@ -1407,17 +1407,44 @@ async function delShop(id) {
 }
 
 /* ---------- BACKUP ---------- */
-function exportData() {
-  const out = JSON.parse(JSON.stringify(DATA));
-  // photos bhi saath le lo
-  out._photos = {};
-  Object.keys(PHOTOS).forEach(k => { if (PHOTOS[k] && PHOTOS[k].length) out._photos[k] = PHOTOS[k]; });
-  const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "colony-mitra-backup-" + new Date().toISOString().slice(0, 10) + ".json";
-  a.click();
-  toast("⬇️ Backup download ho gaya");
+async function exportData() {
+  const btn = $("#exportBtn");
+  if (btn) { btn.disabled = true; btn.textContent = "⏳ Photos jod rahe hain…"; }
+  try {
+    const out = JSON.parse(JSON.stringify(DATA));
+
+    /* ---- photos: HAR business ki, chahe app me kabhi khuli na ho ----
+       (pehle sirf memory se leti thi — unopened shops ki photos chhoot jati thi) */
+    out._photos = {};
+    if (FB_DB) {
+      try {
+        const snap = await FB_DB.ref("photos").once("value");
+        const all = snap.val() || {};
+        Object.keys(all).forEach(id => {
+          const p = all[id];
+          out._photos[id] = Array.isArray(p) ? p.filter(Boolean) : Object.values(p || {}).filter(Boolean);
+        });
+      } catch (e) { console.warn("[export] photos:", e && e.message); }
+    }
+    /* local mode me memory se bhi jodo */
+    Object.keys(PHOTOS).forEach(k => {
+      if (PHOTOS[k] && PHOTOS[k].length && !out._photos[k]) out._photos[k] = PHOTOS[k];
+    });
+
+    const nShops = Object.keys(out.shops || {}).length;
+    const nPh    = Object.keys(out._photos).length;
+    const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "colony-mitra-backup-" + new Date().toISOString().slice(0, 10) + ".json";
+    a.click();
+    toast("⬇️ Backup mil gaya — " + nShops + " Business, " + nPh + " photos");
+  } catch (e) {
+    console.warn("[export]", e);
+    toast("⚠️ Backup nahi ban paaya — dobara try karo");
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "⬇️ Backup lo"; }
+  }
 }
 
 /* ============================================================

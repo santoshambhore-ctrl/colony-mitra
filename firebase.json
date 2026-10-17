@@ -10,7 +10,22 @@
       "**/node_modules/**",
       "README.md",
       "**/*.md",
-      "**/*.html.orig"
+      "**/*.html.orig",
+
+      "downloads.html",
+      "*.pdf",
+      "backup/**",
+      "backup.js",
+      "manual.html",
+      "app-kya-hai.html",
+      "app-kaise-kaam-karti-hai.html",
+      "marathi-msg.html",
+      "mr*.html",
+      "dukaan-form.html",
+      "MESSAGE-SET.md",
+      "PASTE-RULES.txt",
+      "database.rules.json",
+      "lang.js"
     ],
     "headers": [
       {

@@ -1408,43 +1408,6 @@ async function delShop(id) {
 }
 
 /* ============================================================
-   📤 SHARE  —  app apne aap aage failta rahe
-   ============================================================ */
-const SHARE_TEXT =
-  "नमस्कार! आपल्या कॉलनीसाठी Colony Mitra App सुरू झाला आहे. " +
-  "कॉलनीतील सगळ्या व्यवसायांची नाव, नंबर, फोटो, दर — सगळं एकाच ठिकाणी. " +
-  "पूर्णपणे FREE, कोणतेही charge नाही.\n\n👉 ";
-
-function shareApp() {
-  const url  = location.origin + "/";
-  const full = SHARE_TEXT + url;
-
-  trackShare();
-
-  /* 1) Native share menu (Android Chrome, iPhone Safari) */
-  if (navigator.share) {
-    navigator.share({
-      title: "Colony Mitra",
-      text:  SHARE_TEXT,
-      url
-    }).catch(() => {});          // user ne cancel kiya — kuch nahi
-    return;
-  }
-
-  /* 2) Fallback — WhatsApp khud kholo */
-  window.open("https://wa.me/?text=" + encodeURIComponent(full), "_blank");
-}
-
-/* kitne logon ne share kiya — sirf count, koi personal data nahi */
-function trackShare() {
-  try {
-    const k = "cm_shared";
-    const n = (Number(localStorage.getItem(k)) || 0) + 1;
-    localStorage.setItem(k, String(n));
-  } catch (e) { /* storage full */ }
-}
-
-/* ============================================================
    CLOUD INFO  —  badge par tap karo to pata chale data kahan hai
    ============================================================ */
 let LAST_SYNC = Number(localStorage.getItem("cm_last_sync")) || 0;
@@ -1509,7 +1472,7 @@ function showSyncSheet() {
       ${unlocked
         ? `<button type="button" class="btn" id="ssBackup">⬇️ Backup लो</button>
            <button type="button" class="btn" id="ssStats">📊 Users</button>`
-        : `<button type="button" class="btn" id="ssShare">📤 Share करो</button>`}
+        : ""}
     </div>`;
 
   sheet.hidden = false;
@@ -1541,8 +1504,6 @@ function showSyncSheet() {
   if (bk) bk.onclick = () => { sheet.hidden = true; exportData(); };
   const st = $("#ssStats");
   if (st) st.onclick = () => { sheet.hidden = true; switchTab("admin"); };
-  const sh = $("#ssShare");
-  if (sh) sh.onclick = () => { sheet.hidden = true; shareApp(); };
 }
 
 /* ---------- BACKUP ---------- */
@@ -1868,10 +1829,6 @@ function init() {
 
   // cloud badge par tap -> data kahan hai, kitna hai, refresh + backup
   $("#syncBadge").onclick = showSyncSheet;
-
-  // share button
-  const shb = $("#shareBtn");
-  if (shb) shb.onclick = shareApp;
   $("#importFile").onchange = e => {
     const f = e.target.files[0]; if (!f) return;
     const fr = new FileReader();

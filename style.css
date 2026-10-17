@@ -48,7 +48,6 @@ body{
   width:38px;height:38px;border-radius:50%;cursor:pointer;flex-shrink:0;
 }
 .icon-btn:active{transform:scale(.9)}
-#shareBtn{background:rgba(255,255,255,.28)}
 
 /* ---------- CLOUD SHEET ---------- */
 .sync-sheet{

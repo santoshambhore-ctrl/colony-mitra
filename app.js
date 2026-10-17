@@ -1505,6 +1505,59 @@ async function delShop(id) {
 }
 
 /* ============================================================
+   🎉 LAUNCH MESSAGE  —  20 Oct 2026, सुबह 8:00 बजे से दिखेगा
+   आज 21 Oct है तो भी दिखेगा (कुछ देर बाद तक)
+   ============================================================ */
+const LAUNCH_AT = Date.parse("2026-10-20T08:00:00+05:30");  // IST
+const LAUNCH_TILL = Date.parse("2026-10-27T23:59:59+05:30");
+const LM_KEY = "cm_launch_seen";
+
+function launchBanner() {
+  const box = $("#launchBanner");
+  if (!box) return;
+  const now = Date.now();
+
+  /* 20 Oct 8:00 बजे से पहले — नहीं दिखेगा */
+  if (now < LAUNCH_AT) { box.hidden = true; return; }
+
+  /* 27 Oct के बाद हट जाएगा (1 हफ्ते का message) */
+  if (now > LAUNCH_TILL) { box.hidden = true; return; }
+
+  /* user ने बंद किया तो दोबारा नहीं दिखेगा */
+  if (localStorage.getItem(LM_KEY) === "1") { box.hidden = true; return; }
+
+  box.hidden = false;
+}
+
+function initLaunchBanner() {
+  launchBanner();
+  const x = $("#lmClose");
+  if (x) x.onclick = () => {
+    try { localStorage.setItem(LM_KEY, "1"); } catch (e) {}
+    const box = $("#launchBanner");
+    if (box) box.hidden = true;
+    toast("📌 बंद केले — पुन्हा दिसणार नाही");
+  };
+  /* खुला रहा तो 8 बजे आपोआप दिखे */
+  setInterval(launchBanner, 30000);
+}
+
+/* पूछें नहीं जानते — "दिसतोय का?" जाँच बटन (admin साठी handy) */
+function launchStatus() {
+  const now = Date.now();
+  const d = Math.round((LAUNCH_AT - now) / 36e5);
+  if (now < LAUNCH_AT)  return "⏳ Banner " + (d > 48 ? Math.round(d / 24) + " दिवस" : d + " तास") + "मध्ये येतो";
+  if (now > LAUNCH_TILL) return "⌛ Banner संपला";
+  return "🎉 Banner चालू आहे (" +
+    new Date(LAUNCH_AT).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) + " पासून)";
+}
+
+function renderLaunchStatus() {
+  const el = $("#launchStatus");
+  if (el) el.textContent = launchStatus();
+}
+
+/* ============================================================
    CLOUD INFO  —  badge par tap karo to pata chale data kahan hai
    ============================================================ */
 let LAST_SYNC = Number(localStorage.getItem("cm_last_sync")) || 0;
@@ -1653,6 +1706,7 @@ function switchTab(name) {
 }
 
 function init() {
+  initLaunchBanner();
   renderEmAdmin();
   renderQuickAdd();
   applyLogo();
@@ -1892,6 +1946,25 @@ function init() {
   };
   const dab = $("#delAllPhotos");
   if (dab) dab.onclick = delAllPhotos;
+
+  // launch banner — admin test buttons
+  const tl = $("#testLaunch");
+  if (tl) tl.onclick = () => {
+    try { localStorage.removeItem(LM_KEY); } catch (e) {}
+    launchBanner();
+    switchTab("home");
+    window.scrollTo({ top: 0 });
+    toast("🎉 बॅनर दिसतोय — टेस्ट केला");
+  };
+  const rl = $("#resetLaunch");
+  if (rl) rl.onclick = () => {
+    try { localStorage.setItem(LM_KEY, "1"); } catch (e) {}
+    const box = $("#launchBanner");
+    if (box) box.hidden = true;
+    renderLaunchStatus();
+    toast("⌛ बॅनर लपला");
+  };
+  renderLaunchStatus();
 
   // shop codes theek karo (admin only)
   $("#fixCodes").onclick = () => {

@@ -483,13 +483,18 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:1
 .feed{display:grid;gap:11px}
 .post{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
 .post{position:relative}
-.post .tag{font-size:11px;font-weight:800;margin-bottom:7px;display:block;padding-right:34px}
+.post .tag{font-size:11px;font-weight:800;margin-bottom:7px;display:block;padding-right:96px}
 .del-post{
-  position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;
-  background:var(--bg);color:var(--danger);border:1px solid var(--line);
-  font-size:13px;cursor:pointer;line-height:1;z-index:2;
+  position:absolute;top:9px;right:9px;
+  display:flex;align-items:center;gap:4px;
+  padding:8px 12px;border-radius:99px;
+  background:var(--danger);color:#fff;
+  border:2px solid #fff;
+  box-shadow:0 2px 7px rgba(0,0,0,.3);
+  font-size:13.5px;font-weight:800;cursor:pointer;line-height:1;z-index:5;
+  white-space:nowrap;
 }
-.del-post:active{background:var(--danger);color:#fff}
+.del-post:active{transform:scale(.93);filter:brightness(1.12)}
 .post p{margin:0;font-size:14.5px;line-height:1.55}
 .post img{width:100%;border-radius:12px;margin-top:10px;display:block}
 .post .date{font-size:11px;color:var(--muted);margin-top:8px}
@@ -598,14 +603,14 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:1
 /* ---------- PHOTO DELETE (✕ badge) ---------- */
 .ph{position:relative}
 .ph .x{
-  position:absolute;top:3px;right:3px;z-index:2;
-  width:23px;height:23px;border-radius:50%;
-  background:#dc2626;color:#fff;border:2px solid #fff;
-  font-size:13px;font-weight:800;line-height:1;
+  position:absolute;top:4px;right:4px;z-index:6;
+  width:32px;height:32px;border-radius:50%;
+  background:#dc2626;color:#fff;border:2.5px solid #fff;
+  font-size:16px;font-weight:800;line-height:1;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;box-shadow:0 1px 5px rgba(0,0,0,.4);
+  cursor:pointer;box-shadow:0 2px 7px rgba(0,0,0,.4);
 }
-.ph .x:active{transform:scale(.85)}
+.ph .x:active{transform:scale(.86)}
 .ph-tools{
   display:flex;align-items:center;justify-content:space-between;gap:9px;
   margin-top:9px;flex-wrap:wrap;

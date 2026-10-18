@@ -715,7 +715,7 @@ function renderUpdates() {
       </div>` : "";
 
     return `<div class="post">
-      ${unlocked ? `<button class="del-post" data-updel="${esc(u.id)}" title="Delete">✕</button>` : ""}
+      ${unlocked ? `<button class="del-post" data-updel="${esc(u.id)}">🗑️ हटाओ</button>` : ""}
       <span class="tag" style="color:${color}">${label}</span>
       <p>${esc(u.text)}</p>
       ${gallery}

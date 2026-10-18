@@ -300,15 +300,25 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:1
   color:rgba(255,255,255,.75);font-size:12px;cursor:pointer;line-height:1;
 }
 .lm-fl{font-size:27px;line-height:1;margin-bottom:12px}
+.lm-title{
+  font-size:16pt;font-weight:800;letter-spacing:1.2px;
+  margin-bottom:10px;color:#fff;
+}
 .lm-h{
-  margin:0 0 8px;font-size:22pt;font-weight:800;line-height:1.22;color:#fff;
+  margin:0 0 8px;font-size:19pt;font-weight:800;line-height:1.28;color:#fff;
 }
 .lm-sub{
-  margin:0 0 16px;font-size:14pt;font-weight:700;color:#fff;line-height:1.35;
+  margin:0 0 14px;font-size:13.5pt;font-weight:700;color:#ffe9c7;line-height:1.35;
 }
 .lm-body{
-  margin:0 auto 16px;max-width:430px;
-  font-size:12.5pt;line-height:1.65;color:rgba(255,255,255,.95);
+  margin:0 auto 14px;max-width:430px;
+  font-size:12pt;line-height:1.6;color:rgba(255,255,255,.95);
+}
+.lm-dus{
+  margin:0 0 13px;padding:9px 10px;
+  background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.2);
+  border-radius:9px;
+  font-size:12.5pt;font-weight:700;line-height:1.45;color:#fff5e0;
 }
 .lm-foot{
   border-top:1px solid rgba(255,255,255,.28);

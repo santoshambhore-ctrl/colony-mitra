@@ -365,10 +365,15 @@ const CAT_FIX = {
 
   "coaching": "Coaching", "coaching classes": "Coaching",
   "classes": "Coaching", "tuition": "Coaching", "coaching class": "Coaching",
-  "drawing and sketching": "Coaching", "drawing": "Coaching",
-  "sketching": "Coaching", "drawing classes": "Coaching",
-  "art classes": "Coaching", "sketching classes": "Coaching",
   "home tutor": "Coaching", "tution": "Coaching", "tutor": "Coaching",
+  "academy": "Coaching", "institute": "Coaching",
+
+  /* drawing — coaching से अलग category */
+  "drawing and sketching": "Drawing / Sketching", "drawing": "Drawing / Sketching",
+  "sketching": "Drawing / Sketching", "drawing classes": "Drawing / Sketching",
+  "drawing class": "Drawing / Sketching", "art classes": "Drawing / Sketching",
+  "sketching classes": "Drawing / Sketching", "sketch": "Drawing / Sketching",
+  "drawing and sketch": "Drawing / Sketching",
 
   "chadar": "Chadar / Bed Linen", "chadar bedding": "Chadar / Bed Linen",
   "bed linen": "Chadar / Bed Linen", "chadar and pillow": "Chadar / Bed Linen",
@@ -379,8 +384,9 @@ const CAT_FIX = {
   "flour mill": "Atta Chakki", " atta chakki": "Atta Chakki",
   "masala": "Masale", "spices": "Masale", "masale shop": "Masale",
 
-  "bakery": "Bakery", "cake": "Bakery", "cake shop": "Bakery",
-  "bakery and cake": "Bakery",
+  "bakery": "Bakery / Cake", "cake": "Bakery / Cake", "cake shop": "Bakery / Cake",
+  "bakery and cake": "Bakery / Cake", "bakery shop": "Bakery / Cake",
+  "cakes": "Bakery / Cake", "pastry": "Bakery / Cake",
 
   "rangoli": "Rangoli", "rangoli and pipe cleaner": "Rangoli",
   "household": "Household", "house keeping": "Household"

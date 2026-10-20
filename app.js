@@ -735,7 +735,7 @@ function renderUpdates() {
   }).join("");
 }
 
-function render() { renderChips(); renderShops(); renderUpdates(); renderEmergency(); renderUnread(); renderHomeInstall(); }
+function render() { renderChips(); renderShops(); renderUpdates(); renderEmergency(); renderUnread(); }
 
 /* ============================================================
    SHOP DETAIL MODAL
@@ -1220,7 +1220,7 @@ function install() {
   /* Chrome ने अभी event नहीं भेजा.
      यहाँ TAP ही user-engagement है — Chrome अब eligibility check करता है.
      थोड़ा इंतज़ार करके event आने दो (ज़्यादातर यहीं आ जाता है). */
-  const btn = $("#homeInstallBtn");
+  const btn = $("#ilBtn");               // सिर्फ ऊपर वाली install bar का button
   if (btn) { btn.disabled = true; btn.textContent = "⏳…"; }
   toast("⏳ Install तयार होत आहे…");
 
@@ -1612,35 +1612,6 @@ async function delShop(id) {
   CUR_SHOP = null;
   render();
   toast("🗑️ " + name + " delete ho gayi");
-}
-
-/* ============================================================
-   📲 HOME SCREEN INSTALL BUTTON  —  app standalone हो तभी लपेटो
-   ============================================================ */
-function renderHomeInstall() {
-  const box = $("#homeInstall");
-  if (!box) return;
-
-  /* ये button HOME SCREEN पर हमेशा दिखे — चाहे app install हुआ हो या नहीं
-     (colony में लोगों को दिखाकर बोलने के लिए) */
-  box.hidden = false;
-
-  const btn = $("#homeInstallBtn");
-  const done = isStandalone();
-  if (btn && !btn.dataset.wired) {
-    btn.dataset.wired = "1";
-    btn.onclick = () => {
-      if (done) { toast("✅ App होम स्क्रीनवर आहे"); return; }
-      install();
-    };
-  }
-  if (done) {
-    btn.textContent = "✓ होम स्क्रीनवर";
-    btn.disabled = true;
-  } else {
-    btn.textContent = "Install करा";
-    btn.disabled = false;
-  }
 }
 
 /* ============================================================
@@ -2248,7 +2219,12 @@ function init() {
   window.addEventListener("appinstalled", () => {
     hideInstallBar();
     localStorage.setItem("installbar_closed", "1");
-    renderHomeInstall();          // button "✓ होम स्क्रीनवर" बन जाएगा
+    /* 🎉 INSTALL track — ab install ki ginnati ho sakti hai */
+    if (FB_DB) {
+      FB_DB.ref("stats/installs/" + deviceId())
+        .set({ ts: Date.now(), when: new Date().toISOString() })
+        .catch(() => {});
+    }
     toast("🎉 App install ho gaya!");
   });
   $("#ilBtn").onclick = install;

@@ -51,6 +51,16 @@ let NEW_LOGO = null;
 let cat = "all";
 let query = "";
 
+/* ---------- 📲 INSTALL — event ko SABSE PEHLE pakdo ----------
+   Chrome 'beforeinstallprompt' page load ke dauran bhejta hai.
+   Listener init() me baad me lagta tha — event chhoot jaata tha.
+   Isliye ye upar hi, turant. */
+let deferredPrompt = null;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();          // browser ka apna prompt rok do
+  deferredPrompt = e;          // ham apna button se use karenge
+});
+
 /* ---------- HELPERS ---------- */
 const $  = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -1132,9 +1142,8 @@ function renderStats() {
 
 /* ============================================================
    INSTALL  —  app ko home screen par kaise lagayein
+   (deferredPrompt file ke shuru me hi declare hai — line ~58)
    ============================================================ */
-let deferredPrompt = null;
-
 function isStandalone() {
   return window.matchMedia("(display-mode: standalone)").matches
       || window.navigator.standalone === true;
@@ -1191,23 +1200,97 @@ function install() {
     alert(steps);
     return;
   }
-  if (deferredPrompt) {
+  /* 🎉 DIRECT INSTALL — Chrome का अपना dialog */
+  const firePrompt = () => {
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
+    deferredPrompt.userChoice.then(choice => {
       deferredPrompt = null;
       hideInstallBar();
-      toast("🎉 App install ho gaya!");
+      renderHomeInstall();
+      if (choice && choice.outcome === "accepted") {
+        toast("🎉 App install ho gaya!");
+      } else {
+        toast("⏳ रद्द केले — पुन्हा प्रयत्न करा");
+      }
     });
-    return;
-  }
-  // iOS / unsupported — step by step batao
-  const steps = isIOS()
-    ? "Safari me link kholo\n\n1️⃣  Neeche Share button (⬆️) dabao\n2️⃣  \"Add to Home Screen\" chuno\n3️⃣  Upar se \"Add\" dabao\n\n⚠️ iPhone par sirf Safari se hota hai, Chrome se nahi."
-    : "Chrome ka menu (⋮) kholo\n\n1️⃣  \"Install app\" ya \"Add to Home screen\" chuno\n2️⃣  \"Install\" / \"Add\" dabao\n\n✅ Phone ke home screen par icon aa jayega";
-  alert(steps);
+  };
+
+  if (deferredPrompt) { firePrompt(); return; }
+
+  /* Chrome ने अभी event नहीं भेजा.
+     यहाँ TAP ही user-engagement है — Chrome अब eligibility check करता है.
+     थोड़ा इंतज़ार करके event आने दो (ज़्यादातर यहीं आ जाता है). */
+  const btn = $("#homeInstallBtn");
+  if (btn) { btn.disabled = true; btn.textContent = "⏳…"; }
+  toast("⏳ Install तयार होत आहे…");
+
+  let tries = 0;
+  const t = setInterval(() => {
+    tries++;
+    if (deferredPrompt) {
+      clearInterval(t);
+      if (btn) { btn.disabled = false; btn.textContent = "Install करा"; }
+      firePrompt();
+    } else if (tries >= 12) {            // ≈ 6 second
+      clearInterval(t);
+      if (btn) { btn.disabled = false; btn.textContent = "Install करा"; }
+      /* Chrome ने फिर भी event नहीं दिया — steps दिखाओ */
+      showInstallHelp();
+    }
+  }, 500);
 }
 
 function hideInstallBar() { $("#installBar").classList.remove("on"); }
+
+/* ---------- INSTALL HELP — in-app panel (alert nahi) ---------- */
+function showInstallHelp() {
+  const sheet = $("#installHelp");
+  if (!sheet) return;
+  const ios = isIOS();
+  const inApp = inAppBrowser();
+
+  let title = "📲 App कसा Install करावा";
+  let body = "";
+
+  if (inApp) {
+    title = "⚠️ Asli browser मध्ये उघडा";
+    body = `<div class="hs-big">🔗 WhatsApp/Instagram का अपना browser
+      App <b>install नहीं कर सकता</b>.</div>
+      <div class="hs-step"><b>1</b><div>${ios
+        ? "ऊपर right corner में <b>⋮</b> दबाओ → <b>\"Open in Safari\"</b>"
+        : "ऊपर right corner में <b>⋮</b> दबाओ → <b>\"Open in Chrome\"</b>"}</div></div>
+      <div class="hs-step"><b>2</b><div>अब खुले Chrome/Safari में <b>नीचे हरा \"Install करा\"</b> दबाओ</div></div>
+      <div class="hs-step"><b>3</b><div>\"Install\" / \"Add\" दबाओ → <b>बस! 🏠</b></div></div>`;
+  } else if (ios) {
+    title = "🍎 iPhone — Safari से Install करा";
+    body = `<div class="hs-step"><b>1</b><div>नीचे <b>Share</b> button (⬆️) दबाओ</div></div>
+      <div class="hs-step"><b>2</b><div>नीचे scroll करून <b>\"Add to Home Screen\"</b> निवडा</div></div>
+      <div class="hs-step"><b>3</b><div>उपरून <b>\"Add\"</b> दबाओ → <b>बस! 🏠</b></div></div>
+      <div class="hs-note">⚠️ iPhone वर फक्त <b>Safari</b> वापरा, Chrome नाही.</div>`;
+  } else {
+    title = "🤖 Android — Chrome में Install करा";
+    body = `<div class="hs-step"><b>1</b><div>ऊपर तीन ठिपके <b>⋮</b> (menu) दबाओ</div></div>
+      <div class="hs-step"><b>2</b><div>खाली <b>\"Install app\"</b> किंवा <b>\"Add to Home screen\"</b> निवडा</div></div>
+      <div class="hs-step"><b>3</b><div>\"Install\" / \"Add\" दबाओ → <b>बस! 🏠</b></div></div>
+      <div class="hs-note">ℹ️ Chrome थोड़ी देराने install देता है —
+        पहली बार App खोलकर <b>३० सेकंड उपयोग करा</b>, फिर हरा
+        \"Install करा\" दबाओ। दूसरे कोशिश में सीधे install हो जाएगा।<br><br>
+        या App खोलने से पहले नीचे <b>⋮ मेनू → \"Install app\"</b> दबा लो।</div>`;
+  }
+
+  $("#hsTitle").textContent = title;
+  $("#hsBody").innerHTML = body;
+  sheet.hidden = false;
+}
+
+/* deferredPrompt नसेल तर — कडी आणि पुन्हा प्रयत्न */
+function showInstallHelpAfterTap() {
+  const s = $("#installHelp");
+  if (s) s.hidden = true;
+  const isHelpOpen = s && !s.hidden;
+  if (isHelpOpen) return;
+  showInstallHelp();
+}
 
 /* ============================================================
    AUTH  —  Sirf admin email se login
@@ -2161,12 +2244,7 @@ function init() {
 
   sync();
 
-  // install prompt
-  window.addEventListener("beforeinstallprompt", e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallBar();
-  });
+  // install — event upar (file ke shuru) hi pakda jaata hai
   window.addEventListener("appinstalled", () => {
     hideInstallBar();
     localStorage.setItem("installbar_closed", "1");
@@ -2174,6 +2252,10 @@ function init() {
     toast("🎉 App install ho gaya!");
   });
   $("#ilBtn").onclick = install;
+  const hsC = $("#hsClose");
+  if (hsC) hsC.onclick = () => { $("#installHelp").hidden = true; };
+  const hsO = $("#installHelp");
+  if (hsO) hsO.onclick = e => { if (e.target === hsO) hsO.hidden = true; };
   $("#ilClose").onclick = () => {
     hideInstallBar();
     localStorage.setItem("installbar_closed", "1");

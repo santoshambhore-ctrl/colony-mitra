@@ -725,7 +725,7 @@ function renderUpdates() {
   }).join("");
 }
 
-function render() { renderChips(); renderShops(); renderUpdates(); renderEmergency(); renderUnread(); }
+function render() { renderChips(); renderShops(); renderUpdates(); renderEmergency(); renderUnread(); renderHomeInstall(); }
 
 /* ============================================================
    SHOP DETAIL MODAL
@@ -1532,6 +1532,35 @@ async function delShop(id) {
 }
 
 /* ============================================================
+   📲 HOME SCREEN INSTALL BUTTON  —  app standalone हो तभी लपेटो
+   ============================================================ */
+function renderHomeInstall() {
+  const box = $("#homeInstall");
+  if (!box) return;
+
+  /* ये button HOME SCREEN पर हमेशा दिखे — चाहे app install हुआ हो या नहीं
+     (colony में लोगों को दिखाकर बोलने के लिए) */
+  box.hidden = false;
+
+  const btn = $("#homeInstallBtn");
+  const done = isStandalone();
+  if (btn && !btn.dataset.wired) {
+    btn.dataset.wired = "1";
+    btn.onclick = () => {
+      if (done) { toast("✅ App होम स्क्रीनवर आहे"); return; }
+      install();
+    };
+  }
+  if (done) {
+    btn.textContent = "✓ होम स्क्रीनवर";
+    btn.disabled = true;
+  } else {
+    btn.textContent = "Install करा";
+    btn.disabled = false;
+  }
+}
+
+/* ============================================================
    🎉 LAUNCH MESSAGE  —  20 Oct 2026, सुबह 8:00 बजे से दिखेगा
    आज 21 Oct है तो भी दिखेगा (कुछ देर बाद तक)
    ============================================================ */
@@ -2141,6 +2170,7 @@ function init() {
   window.addEventListener("appinstalled", () => {
     hideInstallBar();
     localStorage.setItem("installbar_closed", "1");
+    renderHomeInstall();          // button "✓ होम स्क्रीनवर" बन जाएगा
     toast("🎉 App install ho gaya!");
   });
   $("#ilBtn").onclick = install;

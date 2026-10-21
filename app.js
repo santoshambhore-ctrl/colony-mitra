@@ -1615,85 +1615,6 @@ async function delShop(id) {
 }
 
 /* ============================================================
-   🎉 LAUNCH MESSAGE  —  20 Oct 2026, सुबह 8:00 बजे से दिखेगा
-   आज 21 Oct है तो भी दिखेगा (कुछ देर बाद तक)
-   ============================================================ */
-const LAUNCH_AT = Date.parse("2026-10-17T00:00:00+05:30");  // AAJ — abhi se sabko dikhega
-/* Note: aaj = 20 october 2026 maana jaata hai (launch day) */
-let LAUNCH_FORCE = false;          // admin test — date check chhodo
-const LAUNCH_TILL = Date.parse("2026-10-31T23:59:59+05:30");
-const LM_KEY = "cm_lm_v2";           // नया key — पुराना छिपा हुआ flag ignore
-const LM_HIDE_HRS = 12;              // बंद करने पर 12 घंटे छुपा रहेगा, फिर दिखेगा
-
-/* छिपा हुआ है या नहीं — पर 12 घंटे बाद फिर दिखेगा
-   (पुराना तरीका permanent छुपा देता था — इसीले किसी को कभी नहीं दिखता था) */
-function lmHidden() {
-  try {
-    const t = Number(localStorage.getItem(LM_KEY)) || 0;
-    if (!t) return false;
-    return (Date.now() - t) < LM_HIDE_HRS * 36e5;
-  } catch (e) { return false; }
-}
-function lmHide() {
-  try { localStorage.setItem(LM_KEY, String(Date.now())); } catch (e) {}
-}
-function lmClear() {
-  try { localStorage.removeItem(LM_KEY); } catch (e) {}
-}
-
-function launchBanner() {
-  const box = $("#launchBanner");
-  if (!box) return;
-  const now = Date.now();
-
-  /* admin ne "abhi dikhao" daba hai? — tab date chhodo */
-  if (!LAUNCH_FORCE) {
-    if (now < LAUNCH_AT) { box.hidden = true; return; }
-    if (now > LAUNCH_TILL) { box.hidden = true; return; }
-  }
-
-  if (lmHidden()) { box.hidden = true; return; }
-
-  box.hidden = false;
-}
-
-function initLaunchBanner() {
-  launchBanner();
-  const x = $("#lmClose");
-  if (x) x.onclick = () => {
-    lmHide();
-    const box = $("#launchBanner");
-    if (box) box.hidden = true;
-    renderLaunchStatus();
-    toast("📌 १२ तास लपलंय — नंतर पुन्हा दिसेल");
-  };
-  setInterval(launchBanner, 30000);
-  /* tab बदलने पर भी check (phone unlock करते ही) */
-  document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) launchBanner();
-  });
-}
-
-/* पूछें नहीं जानते — "दिसतोय का?" जाँच बटन (admin साठी handy) */
-function launchStatus() {
-  if (LAUNCH_FORCE) return "👁 जरूर दाखवतोय (तुमच्यावरच)";
-  const now = Date.now();
-  if (now < LAUNCH_AT)  return "⏳ Banner " + Math.max(1, Math.round((LAUNCH_AT - now) / 36e5)) + " तासांमध्ये येतो";
-  if (now > LAUNCH_TILL) return "⌛ Banner संपला";
-  if (lmHidden()) {
-    let left = Math.ceil((LM_HIDE_HRS * 36e5 - (now - Number(localStorage.getItem(LM_KEY) || 0))) / 36e5);
-    return "🙈 तुम्ही बंद केलंय — " + Math.max(1, left) + " तासांनी पुन्हा दिसेल";
-  }
-  const days = Math.ceil((LAUNCH_TILL - now) / 864e5);
-  return "🎉 सबकडे दिसत आहे — " + days + " दिवसांनी आपोआप हटेल";
-}
-
-function renderLaunchStatus() {
-  const el = $("#launchStatus");
-  if (el) el.textContent = launchStatus();
-}
-
-/* ============================================================
    CLOUD INFO  —  badge par tap karo to pata chale data kahan hai
    ============================================================ */
 let LAST_SYNC = Number(localStorage.getItem("cm_last_sync")) || 0;
@@ -1842,7 +1763,7 @@ function switchTab(name) {
 }
 
 function init() {
-  initLaunchBanner();
+
   renderEmAdmin();
   renderQuickAdd();
   applyLogo();
@@ -2082,31 +2003,6 @@ function init() {
   };
   const dab = $("#delAllPhotos");
   if (dab) dab.onclick = delAllPhotos;
-
-  // launch banner — admin test buttons
-  const tl = $("#testLaunch");
-  if (tl) tl.onclick = () => {
-    LAUNCH_FORCE = true;
-    lmClear();                                // ← purana flag bhi mitao
-    launchBanner();
-    switchTab("home");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    renderLaunchStatus();
-    const box = $("#launchBanner");
-    toast(box && !box.hidden
-      ? "🎉 बॅनर दिसतोय!"
-      : "⚠️ अजून दिसत नाही — App बंद करके पुन्हा उघडा");
-  };
-  const rl = $("#resetLaunch");
-  if (rl) rl.onclick = () => {
-    LAUNCH_FORCE = false;
-    lmHide();
-    const box = $("#launchBanner");
-    if (box) box.hidden = true;
-    renderLaunchStatus();
-    toast("🙈 १२ तासासाठी लपलंय");
-  };
-  renderLaunchStatus();
 
   // shop codes theek karo (admin only)
   $("#fixCodes").onclick = () => {

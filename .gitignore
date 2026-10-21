@@ -35,7 +35,15 @@ desktop.ini
 # ---- editors ----
 .vscode/
 .idea/
-*.swp# ---- backup: sirf latest rakho, dated history bahar ----
+**.swp
+# ---- backup: sirf latest rakho, dated history bahar ----
 backup/*-20*.json
 backup/*-20*.html
 backup/*-20*.csv
+
+# ---- local admin tools (password env var se — koi secret nahi) ----
+# ye sabhi zaroori hain, isliye push hote hain
+
+# ---- temp ----
+_*.js
+_tmp*

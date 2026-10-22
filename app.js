@@ -411,8 +411,8 @@ const CAT_FIX = {
   "tiffin": "Tiffin / Mess", "mess": "Tiffin / Mess",
   "tiffin service": "Tiffin / Mess", "tiffin and mess": "Tiffin / Mess",
   "catering": "Tiffin / Mess", "tiffin / mess": "Tiffin / Mess",
-  "sanitary pad": "Personal Care", "shampoo": "Personal Care",
-  "personal care": "Personal Care", "soap": "Personal Care",
+  "shampoo": "Shampoo", "shampoo shop": "Shampoo",
+  "sanitary pad": "Sanitary Pad", "sanitary pads": "Sanitary Pad",
 
   "life insurance": "Insurance", "lic mutual fund": "Insurance",
   "mutual fund": "Insurance", "insurance": "Insurance",
@@ -442,7 +442,8 @@ const KNOWN_CATS = new Set([
   "Baby Sitting", "Ladies Tailor", "Saloon / Beauty", "Jewellery",
   "Groceries & Dairy", "Cloth / Saree / Garments", "Dresses",
   "Coaching", "Drawing / Sketching", "Chadar / Bed Linen", "Atta Chakki",
-  "Masale", "Bakery / Cake", "Rangoli", "Tiffin / Mess", "Personal Care",
+  "Masale", "Bakery / Cake", "Rangoli", "Tiffin / Mess",
+  "Shampoo", "Sanitary Pad",
   "Insurance", "Food / Snacks", "Digital Media"
 ]);
 

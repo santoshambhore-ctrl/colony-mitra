@@ -1,0 +1,364 @@
+/* ============================================================
+   🎨 COLONY MITRA — PREMIUM DESIGN OVERRIDES
+   (style.css ke BAAD me load hota hai — yahan naya look)
+   ============================================================ */
+
+:root{
+  /* palette */
+  --bg:#F7F9FA;
+  --card:#FFFFFF;
+  --txt:#1F2937;
+  --muted:#6B7280;
+  --pri:#0F8B7D;
+  --pri2:#12A594;
+  --pri-dk:#0B6E63;
+  --gold:#F4B400;
+  --line:#E5E9EC;
+  --wa:#25D366;
+  --danger:#DC2626;
+  --warn:#F59E0B;
+
+  --radius:18px;
+  --r-btn:14px;
+  --shadow:0 1px 2px rgba(16,24,40,.05), 0 8px 24px rgba(16,24,40,.06);
+  --shadow-sm:0 1px 2px rgba(16,24,40,.05);
+}
+body.dark{
+  --bg:#0E1214; --card:#171C1E; --txt:#EEF2F3; --muted:#9AA6AC;
+  --line:#252C2F; --pri:#12A594; --pri2:#14B8A6; --pri-dk:#0B6E63;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.28);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+}
+
+/* ============================================================
+   1) HEADER — छोटा, clean, sharp
+   ============================================================ */
+.topbar{
+  padding:9px 14px calc(9px + env(safe-area-inset-top));
+  padding-top:calc(9px + env(safe-area-inset-top));
+  gap:12px;
+  background:linear-gradient(135deg,var(--pri-dk),var(--pri));
+}
+.brand{gap:9px}
+.logo{
+  width:36px;height:36px;border-radius:10px;
+  box-shadow:0 1px 3px rgba(0,0,0,.25);
+}
+.topbar h1{font-size:16.5px;font-weight:800;letter-spacing:.1px;line-height:1.2}
+.topbar #areaName{font-size:10.5px;opacity:.82;font-weight:500;margin-top:1px}
+.sync{
+  font-size:10px;padding:4px 10px;border-radius:99px;font-weight:700;
+  background:rgba(255,255,255,.16);
+}
+.sync.cloud{background:rgba(37,211,102,.9);color:#fff}
+.icon-btn{
+  width:36px;height:36px;font-size:16px;
+  background:rgba(255,255,255,.14);
+  transition:transform .12s;
+}
+.icon-btn:hover{background:rgba(255,255,255,.22)}
+
+/* ============================================================
+   2) TABS — selected solid green, unselected white + shadow
+   ============================================================ */
+.tabs{
+  top:calc(54px + env(safe-area-inset-top));
+  gap:7px;padding:10px 12px;
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex:1;min-width:88px;
+  padding:9px 10px;
+  font-size:12.5px;font-weight:700;
+  color:var(--txt);
+  border:1.5px solid var(--line);
+  background:var(--card);
+  border-radius:99px;
+  box-shadow:var(--shadow-sm);
+  transition:transform .12s,box-shadow .15s;
+}
+.tab:active{transform:scale(.96)}
+.tab.active{
+  background:linear-gradient(135deg,var(--pri-dk),var(--pri));
+  color:#fff;border-color:transparent;
+  box-shadow:0 4px 12px rgba(15,139,125,.32);
+}
+
+/* ============================================================
+   3) LIVE TICKER — badge + gradient
+   ============================================================ */
+.ticker{
+  background:linear-gradient(90deg,var(--pri-dk),var(--pri) 55%,var(--pri2));
+  border-radius:14px;padding:8px 12px;margin-bottom:12px;
+  gap:9px;box-shadow:0 3px 12px rgba(15,139,125,.24);
+}
+.tk-live{
+  flex-shrink:0;
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,.95);color:var(--pri-dk);
+  font-size:9.5px;font-weight:900;letter-spacing:.6px;
+  padding:3px 8px;border-radius:99px;
+  box-shadow:0 1px 3px rgba(0,0,0,.18);
+}
+.tk-live::before{
+  content:"";width:6px;height:6px;border-radius:50%;background:#e11d48;
+  animation:tkBlink 1.4s ease-in-out infinite;
+}
+@keyframes tkBlink{0%,100%{opacity:1}50%{opacity:.25}}
+.tk-badge{display:none}
+.tk-item{font-size:12.5px;font-weight:600;letter-spacing:.1px;padding-right:40px}
+
+/* ============================================================
+   4) SEARCH — modern, icon left, focus ring
+   ============================================================ */
+.search-wrap{position:relative;margin-bottom:13px}
+.sw-ic{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  font-size:15px;opacity:.5;pointer-events:none;z-index:2;
+}
+#search{
+  padding:14px 14px 14px 40px !important;
+  font-size:14.5px !important;
+  border:1.5px solid var(--line) !important;
+  border-radius:var(--r-btn) !important;
+  background:var(--card) !important;
+  box-shadow:var(--shadow-sm) !important;
+  transition:border-color .15s,box-shadow .15s;
+}
+#search::placeholder{color:#9AA6AC}
+#search:focus{
+  border-color:var(--pri) !important;
+  box-shadow:0 0 0 3.5px rgba(15,139,125,.14) !important;
+}
+
+/* ============================================================
+   5) HERO WELCOME — branding
+   ============================================================ */
+.hero-welcome{
+  display:flex;align-items:center;gap:12px;
+  background:linear-gradient(135deg,#F0FDFA,#ECFDF5);
+  border:1.5px solid #CCFBF1;border-radius:var(--radius);
+  padding:13px 14px;margin-bottom:13px;
+}
+.dark .hero-welcome{background:#0F1A19;border-color:#1E3B38}
+.hero-welcome .hw-ic{font-size:26px;line-height:1;flex-shrink:0}
+.hero-welcome b{display:block;font-size:14px;color:var(--pri-dk);line-height:1.3}
+.dark .hero-welcome b{color:#5EEAD4}
+.hero-welcome span{font-size:11.5px;color:var(--muted);line-height:1.4;display:block;margin-top:2px}
+
+/* ============================================================
+   6) CATEGORY CHIPS
+   ============================================================ */
+.chips{gap:8px;padding-bottom:12px;margin-bottom:6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  padding:8px 14px;font-size:12.5px;font-weight:700;
+  border:1.5px solid var(--line);background:var(--card);color:var(--txt);
+  border-radius:99px;box-shadow:var(--shadow-sm);
+  display:inline-flex;align-items:center;gap:5px;
+  transition:transform .12s;
+}
+.chip:active{transform:scale(.95)}
+.chip.on{
+  background:linear-gradient(135deg,var(--pri-dk),var(--pri));
+  color:#fff;border-color:transparent;
+  box-shadow:0 4px 10px rgba(15,139,125,.26);
+}
+.chip .cnt{
+  background:var(--bg);color:var(--pri);
+  min-width:18px;height:18px;line-height:18px;padding:0 5px;
+  font-size:10px;font-weight:800;border-radius:99px;
+}
+.chip.on .cnt{background:rgba(255,255,255,.95);color:var(--pri-dk)}
+
+/* ============================================================
+   7) BUSINESS CARDS — premium
+   ============================================================ */
+.grid{gap:12px}
+.shop{
+  border-radius:var(--radius);padding:12px;
+  border:1.5px solid var(--line);
+  box-shadow:var(--shadow);
+  gap:8px;
+  transition:transform .14s,box-shadow .18s;
+}
+.shop:hover{box-shadow:0 4px 18px rgba(16,24,40,.10)}
+.shop:active{transform:scale(.98);border-color:var(--pri2)}
+.shop .picwrap{
+  min-height:112px;border-radius:13px;background:#EEF2F3;
+  margin:-2px 0 0;
+}
+.shop .pic{
+  max-height:200px;object-fit:cover;width:100%;
+  aspect-ratio:1/1;
+}
+.shop .pic.noimg{object-fit:contain;font-size:34px}
+.shop .code{
+  top:7px;left:7px;font-size:10px;font-weight:800;
+  background:rgba(15,139,125,.95);color:#fff;
+  padding:3px 8px;border-radius:7px;
+  box-shadow:0 2px 6px rgba(0,0,0,.28);
+}
+.shop h3{
+  font-size:14px;font-weight:800;line-height:1.32;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  min-height:2.64em;
+}
+.shop .desc{
+  font-size:11.5px;line-height:1.5;color:var(--muted);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+/* category pills — pastel colour ke hisaab se */
+.shop .cat{
+  font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;
+  background:#ECFDF5;color:#0F766E;border:1px solid transparent;
+}
+.shop .cat.c1{background:#FEF3C7;color:#92400E}   /* gold */
+.shop .cat.c2{background:#DBEAFE;color:#1D4ED8}   /* blue */
+.shop .cat.c3{background:#FCE7F3;color:#BE185D}   /* pink */
+.shop .cat.c4{background:#EDE9FE;color:#6D28D9}   /* violet */
+.shop .cat.c5{background:#FFEDD5;color:#C2410C}   /* orange */
+.shop .cat.c6{background:#DCFCE7;color:#15803D}   /* green */
+.shop .cat.c7{background:#E0F2FE;color:#0369A1}   /* sky */
+.shop .cat.c8{background:#F1F5F9;color:#475569}   /* slate */
+
+/* open / closed — Marathi */
+.badges{gap:5px}
+.badge{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:99px}
+.b-new{background:#DBEAFE;color:#1D4ED8}
+.b-open{background:#DCFCE7;color:#15803D}
+.b-off{background:#FEE2E2;color:#B91C1C}
+
+/* rating — gold stars */
+.shop .rating{font-size:11px;gap:4px;color:var(--muted)}
+.shop .rating b{color:#B45309;font-size:12px;font-weight:800}
+.stars .on{color:var(--gold) !important}
+
+/* ---- card par hi action buttons ---- */
+.shop-acts{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:2px;
+}
+.shop-acts button,.shop-acts a{
+  border:0;border-radius:11px;padding:8px 4px;
+  font-size:11px;font-weight:800;text-align:center;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  cursor:pointer;text-decoration:none;line-height:1;
+}
+.sa-wa{background:var(--wa);color:#04320f}
+.sa-call{background:var(--pri-dk);color:#fff}
+.sa-view{background:var(--bg);color:var(--pri-dk);border:1.5px solid var(--line) !important;grid-column:1/-1}
+.sa-wa:active,.sa-call:active,.sa-view:active{transform:scale(.96)}
+
+/* ============================================================
+   8) DETAIL PAGE
+   ============================================================ */
+.sheet{...}
+.acts{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:15px 0;
+}
+.act{
+  border-radius:var(--r-btn);padding:13px 6px;
+  font-size:12.5px;font-weight:800;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  text-decoration:none;border:0;cursor:pointer;line-height:1.2;
+  box-shadow:var(--shadow-sm);
+}
+.act-wa{background:var(--wa);color:#04320f}
+.act-call{background:var(--pri-dk);color:#fff}
+.act-share{background:var(--card);color:#0369A1;border:1.5px solid #7DD3FC !important}
+.act-edit{background:var(--bg);color:var(--txt)}
+.act-del{background:#FEF2F2;color:#B91C1C;border:1.5px solid #FECACA}
+.act:active{transform:scale(.97)}
+
+/* info rows */
+.info-rows{
+  background:var(--card);border:1.5px solid var(--line);
+  border-radius:var(--radius);overflow:hidden;margin:12px 0;
+  box-shadow:var(--shadow-sm);
+}
+.info-rows .ir{
+  display:flex;gap:11px;align-items:flex-start;
+  padding:11px 13px;border-bottom:1px solid var(--line);
+  font-size:13px;line-height:1.45;
+}
+.info-rows .ir:last-child{border-bottom:0}
+.info-rows .ir .k{color:var(--muted);flex-shrink:0;width:88px;font-size:12.5px}
+.info-rows .ir .v{font-weight:600;flex:1;min-width:0;word-break:break-word}
+.info-rows .ir .v.phone{font-size:16px;font-weight:800;color:var(--pri-dk)}
+
+/* items — card layout */
+.mitem{
+  background:var(--card);border:1.5px solid var(--line);
+  border-radius:14px;padding:11px 13px;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:space-between;gap:11px;
+  box-shadow:var(--shadow-sm);
+}
+.mitem .mi-l{min-width:0;flex:1}
+.mitem .mi-c{font-size:10.5px;font-weight:800;color:var(--pri);text-transform:uppercase;letter-spacing:.3px}
+.mitem .mi-n{font-size:13.5px;font-weight:700;margin-top:2px;line-height:1.3}
+.mitem .mi-p{
+  font-size:13.5px;font-weight:800;color:var(--pri-dk);
+  background:#ECFDF5;padding:6px 11px;border-radius:99px;
+  white-space:nowrap;flex-shrink:0;
+}
+.mgroup h4{
+  margin:16px 0 9px;font-size:12px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;
+}
+
+/* ============================================================
+   9) EMERGENCY — red accent
+   ============================================================ */
+.sos-banner{
+  background:linear-gradient(135deg,#FEF2F2,#FEE2E2);
+  border:1.5px solid #FECACA;border-left:5px solid var(--danger);
+  border-radius:var(--radius);
+}
+.dark .sos-banner{background:#2A1516;border-color:#4A2020}
+.em-row{
+  background:var(--card);border:1.5px solid var(--line);
+  border-radius:14px;padding:12px 13px;
+  box-shadow:var(--shadow-sm);
+}
+.em-row .ic{
+  background:#FEF2F2;color:var(--danger);
+  width:38px;height:38px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.dark .em-row .ic{background:#3A1A1B}
+.em-row .tx b{color:var(--txt)}
+.em-row .tx span{color:var(--danger);font-weight:800}
+.sos-banner>span{font-size:32px}
+.sos-banner strong{color:#B91C1C}
+.dark .sos-banner strong{color:#FCA5A5}
+
+/* ============================================================
+   10) SPACING / SOFT UI
+   ============================================================ */
+.page{padding:16px 14px}
+.listhead{font-size:12.5px;font-weight:800;color:var(--muted);margin:2px 2px 11px}
+.card{border-radius:var(--radius)}
+.btn{border-radius:var(--r-btn) !important}
+.post{border-radius:var(--radius) !important}
+.post{border:1.5px solid var(--line) !important;box-shadow:var(--shadow-sm) !important}
+.tag{border-radius:99px !important;background:var(--bg) !important;padding:3px 9px !important}
+
+/* empty state — Marathi */
+.empty{
+  color:var(--muted);font-size:13.5px;line-height:1.6;
+  background:var(--card);border:1.5px dashed var(--line);
+  border-radius:var(--radius);padding:22px 16px;text-align:center;
+}
+
+/* reviews section title */
+.sec h3{
+  font-size:13.5px;font-weight:800;color:var(--txt);
+  text-transform:none;letter-spacing:0;
+  display:flex;align-items:center;gap:6px;
+  margin-bottom:10px;
+}
+.sec h3::before{content:"";width:3px;height:15px;background:var(--pri);border-radius:2px}

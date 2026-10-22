@@ -719,35 +719,57 @@ function renderShops() {
       return words.some(w => t.includes(w));
     }).slice(0, 6);
     $("#homeEmpty").innerHTML =
-      `<b>😕 "${esc(query)}" kuch nahi mila</b><br><br>` +
+      `<b>😕 "${esc(query)}" — काहीही सापडले नाही</b><br><br>` +
       (hit.length
-        ? `Kya aap ye dhundh rahe ho?<br>` +
+        ? `तुम्हाला हे शोधायचे आहे का?<br>` +
           hit.map(s => `<div class="sug" data-go="${esc(s.id)}">🔍 ${esc(s.name)}</div>`).join("")
-        : `Shabd thoda chhota try karo — jaise <b>jewellery</b>, <b>cake</b>, <b>tailor</b>, <b>coaching</b>`);
+        : `शब्द थोडे लहान वापरून पहा — जसे <b>सॉलून</b>, <b>cake</b>, <b>tailor</b>, <b>coaching</b>`);
   }
 
   $("#shopList").innerHTML = list.map(s => {
     const badges = [];
-    if (s.isNew)  badges.push('<span class="badge b-new">NAYI</span>');
+    if (s.isNew)  badges.push('<span class="badge b-new">नवीन</span>');
     badges.push(s.isOpen
-      ? '<span class="badge b-open">KHULI</span>'
-      : '<span class="badge b-off">BAND</span>');
+      ? '<span class="badge b-open">🟢 सुरू</span>'
+      : '<span class="badge b-off">🔴 बंद</span>');
 
     const img = thumbOf(s);
     const r = ratingOf(s.id);
+    const wa = waNumber(s);
+    const cats = catList(s.cat);
+
+    /* card par hi action buttons */
+    const acts = `
+      <div class="shop-acts">
+        ${wa ? `<a class="sa-wa" href="https://wa.me/${wa}?text=${encodeURIComponent(
+            "नमस्कार " + (s.name || "") + "! " + (s.addr ? "(" + s.addr + ") " : "") + "Colony Mitra App वरून.")}"
+          )}" target="_blank" rel="noopener" data-stop="1">💬 WhatsApp</a>` : ""}
+        ${s.phone ? `<a class="sa-call" href="tel:+${String(s.phone).replace(/\D/g, "")}" data-stop="1">📞 Call</a>` : ""}
+        <button class="sa-view" data-view="${esc(s.id)}">👁️ तपशील पहा</button>
+      </div>`;
+
     return `<article class="shop" data-id="${s.id}">
       <div class="picwrap">
-        ${img ? `<img class="pic" src="${img}" alt="" loading="lazy" decoding="async">` : `<div class="pic">🏪</div>`}
+        ${img ? `<img class="pic" src="${img}" alt="" loading="lazy" decoding="async">` : `<div class="pic noimg">🏪</div>`}
         ${s.code ? `<span class="code">${esc(normCode(s.code))}</span>` : ""}
       </div>
       <h3>${esc(s.name)}</h3>
-      ${s.cat ? catList(s.cat).map(c => `<span class="cat">${esc(c)}</span>`).join(" ") : ""}
+      ${cats.length ? cats.map(c => `<span class="cat ${catTint(c)}">${esc(c)}</span>`).join(" ") : ""}
       <div class="badges">${badges.join("")}</div>
       ${s.desc ? `<p class="desc">${esc(s.desc)}</p>` : ""}
       ${r.n ? `<div class="rating">${starRow(r.avg)} <b>${r.avg}</b> (${r.n})</div>`
-            : `<div class="rating">${starRow(0)} <span>Abhi review nahi</span></div>`}
+            : `<div class="rating">${starRow(0)} <span>अद्याप review नाही</span></div>`}
+      ${acts}
     </article>`;
   }).join("");
+}
+
+/* category ke hisaab se pastel colour — har category ka alag rang */
+function catTint(c) {
+  const s = String(c || "");
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 8;
+  return "c" + (h + 1);
 }
 
 /* ============================================================
@@ -761,12 +783,12 @@ function renderUpdates() {
 
   $("#updatesEmpty").style.display = list.length ? "none" : "block";
 
-  const tag = { offer:     ["🎁 Offer",                    "#f59e0b"],
+  const tag = { offer:     ["🎁 ऑफर",                     "#f59e0b"],
                 sale:      ["🪑 जूने सामान / विक्री",        "#7c3aed"],
-                property:  ["🏠 Property",                  "#0891b2"],
-                new:       ["🆕 Naya Business",             "#2563eb"],
+                property:  ["🏠 Property / भाडा",           "#0891b2"],
+                new:       ["🆕 नवीन व्यवसाय",              "#2563eb"],
                 event:     ["🎉 कार्यक्रम / सभा",           "#db2777"],
-                notice:    ["📌 Notice",                    "#6b7280"] };
+                notice:    ["📌 सूचना",                    "#6b7280"] };
 
   $("#updateList").innerHTML = list.map(u => {
     const [label, color] = tag[u.type] || tag.notice;
@@ -853,24 +875,25 @@ function openShop(id) {
   });
 
   const th = thumbOf(s);
+  const cats = catList(s.cat);
   const html = `
     ${th ? `<img class="hero" id="heroImg" src="${th}" alt="">` : `<div class="hero">🏪</div>`}
 
     <h2>${esc(s.name)}</h2>
     <div class="meta">
       ${s.code ? "🔢 Shop Code: <b>" + esc(normCode(s.code)) + "</b><br>" : ""}
-      ${s.cat ? "🏷️ " + esc(catList(s.cat).join(" · ")) + "<br>" : ""}
+      ${cats.length ? "🏷️ " + esc(cats.join(" · ")) + "<br>" : ""}
       ${s.addr ? "📍 " + esc(s.addr) + "<br>" : ""}
       ${s.time ? "🕐 " + esc(s.time) + "<br>" : ""}
       ${s.phone ? "📞 " + esc(s.phone) : ""}
     </div>
 
     <div class="acts">
-      ${waLink ? `<a class="act act-wa" href="${waLink}" target="_blank" rel="noopener">💬 WhatsApp</a>` : ""}
-      ${tel ? `<a class="act act-call" href="tel:+${tel}">📞 Call</a>` : ""}
-      <button class="act act-share" data-share-shop="${s.id}">📤 Share</button>
-      ${unlocked ? `<button class="act act-edit" data-edit="${s.id}">✏️ Edit</button>` : ""}
-      ${unlocked ? `<button class="act act-del" data-del-shop="${s.id}">🗑️ Delete</button>` : ""}
+      ${waLink ? `<a class="act act-wa" href="${waLink}" target="_blank" rel="noopener">💬<span>WhatsApp</span></a>` : ""}
+      ${tel ? `<a class="act act-call" href="tel:+${tel}">📞<span>Call</span></a>` : ""}
+      <button class="act act-share" data-share-shop="${s.id}">📤<span>Share</span></button>
+      ${unlocked ? `<button class="act act-edit" data-edit="${s.id}">✏️<span>Edit</span></button>` : ""}
+      ${unlocked ? `<button class="act act-del" data-del-shop="${s.id}">🗑️<span>Delete</span></button>` : ""}
     </div>
 
     ${!unlocked ? `
@@ -883,13 +906,19 @@ function openShop(id) {
         <button class="mini" id="shopLogout" title="Logout">Logout</button>
       </div>`}
 
-    ${s.desc ? `<div class="sec"><h3>Kya karta hai</h3><p>${esc(s.desc)}</p></div>` : ""}
+    ${s.desc ? `<div class="sec"><h3>काय काम करते</h3><p>${esc(s.desc)}</p></div>` : ""}
 
     ${Object.keys(groups).length ? `
-      <div class="sec"><h3>Saman &amp; Daam</h3>
+      <div class="sec"><h3>सामान आणि दर</h3>
         ${Object.entries(groups).map(([g, arr]) => `
           <div class="mgroup"><h4>${esc(g)}</h4>
-            ${arr.map(i => `<div class="mitem"><span>${esc(i.name)}</span><span class="p">${esc(i.price)}</span></div>`).join("")}
+            ${arr.map(i => `<div class="mitem">
+              <div class="mi-l">
+                ${i.cat ? `<div class="mi-c">${esc(i.cat)}</div>` : ""}
+                <div class="mi-n">${esc(i.name)}</div>
+              </div>
+              ${i.price ? `<div class="mi-p">${esc(i.price)}</div>` : ""}
+            </div>`).join("")}
           </div>`).join("")}
       </div>` : ""}
 
@@ -910,7 +939,7 @@ function openShop(id) {
       </div>` : ""}
 
     <div class="sec" id="revSec">
-      <h3>⭐ Reviews &amp; Rating</h3>
+      <h3>⭐ रेटिंग आणि अभिप्राय</h3>
       ${ratingHTML(id)}
     </div>
   `;
@@ -1046,7 +1075,7 @@ function ratingHTML(shopId) {
       <p>${esc(r.text)}</p>
     </div>`).join("");
 
-  return summary + form + (items || `<p class="muted" style="text-align:center">Abhi koi review nahi. Pehle aap likho!</p>`);
+  return summary + form + (items || `<p class="muted" style="text-align:center">अद्याप कोणताही review नाही. आपण पहिला लिहा!</p>`);
 }
 
 function sendReview(shopId) {
@@ -1194,8 +1223,7 @@ function renderStats() {
   if (!box) return;
   const devs = Object.values((DATA.stats || {}).devices || {});
   if (!devs.length) {
-    box.innerHTML = `<div class="hintbox">Abhi koi data nahi. Jaise hi koi app kholega,
-      yahan count dikhne lagega.</div>`;
+    box.innerHTML = `<div class="hintbox">अद्याप काहीही माहिती नाही. कोणीही App उघडल्यावर येथे संख्या दिसेल.</div>`;
     return;
   }
   const now = Date.now(), DAY = 864e5;
@@ -1214,23 +1242,23 @@ function renderStats() {
 
   box.innerHTML = `
     <div class="kpis">
-      <div class="kpi"><b>${devs.length}</b><span>Total phones</span></div>
-      <div class="kpi"><b>${today}</b><span>Aaj</span></div>
-      <div class="kpi"><b>${week}</b><span>Is hafte</span></div>
-      <div class="kpi"><b>${month}</b><span>Is mahine</span></div>
+      <div class="kpi"><b>${devs.length}</b><span>एकूण फोन</span></div>
+      <div class="kpi"><b>${today}</b><span>आज</span></div>
+      <div class="kpi"><b>${week}</b><span>या आठवड्यात</span></div>
+      <div class="kpi"><b>${month}</b><span>या महिन्यात</span></div>
     </div>
-    <div class="label">Pichhle 7 din</div>
+    <div class="label">मागील ७ दिवस</div>
     <div class="bars">${days.map((n, i) => `
       <div class="bar"><div class="fill" style="height:${Math.round(n / maxD * 100)}%"></div>
       <span>${n}</span></div>`).join("")}
     </div>
-    <div class="label">Naye phones (7 din me): <b>${fresh}</b></div>
+    <div class="label">नवीन फोन (७ दिवसांत): <b>${fresh}</b></div>
     <div class="lastseen">
       ${devs.sort((a, b) => (b.l || 0) - (a.l || 0)).slice(0, 6)
         .map(d => `<div><i></i> ${fmtTime(d.l)}</div>`).join("")}
     </div>
     <div class="hintbox" style="margin-top:10px">
-      🔒 Sirf count — koi naam, number ya location nahi jode jaati.
+      🔒 फक्त संख्या — कोणताही नाव, नंबर किंवा पत्ता जोडला जात नाही.
     </div>`;
 }
 
@@ -1755,17 +1783,43 @@ function renderTicker() {
   /* lamba message — ticker me chhota dikhao, pura message Updates tab me */
   const short = txt.length > 140 ? txt.slice(0, 140).trim() + "…" : txt;
 
-  track.innerHTML = (mode === "static")
-    ? `<span class="tk-item">${esc(short)}</span>`
-    : `<span class="tk-item">${esc(short)}</span><span class="tk-item">${esc(short)}</span>`;
+  const item = `<span class="tk-item">${esc(short)}</span>`;
+
+  /* ⚠️ IMPORTANT: text same hai to DOM DOBARA mat banao —
+     warna scroll har render me shuru se shuru ho jayega
+     (scroll "continue" nahi hoga) */
+  const changed = box.dataset.txt !== short;
 
   if (mode === "static") {
+    if (changed) { track.innerHTML = item; box.dataset.txt = short; }
     track.style.animation = "none";
   } else {
+    if (changed) {
+      /* 2 copies minimum, phir jitna zaroori ho — seamless loop */
+      track.innerHTML = item + item;
+      box.dataset.txt = short;
+      requestAnimationFrame(() => {
+        const view = track.parentElement;
+        let one = track.firstElementChild ? track.firstElementChild.offsetWidth : 0;
+        if (!one) return;
+        let guard = 0;
+        while (track.scrollWidth < view.clientWidth * 2 + 20 && guard++ < 12) {
+          track.insertAdjacentHTML("beforeend", item);
+          one = track.firstElementChild.offsetWidth;
+        }
+        /* ek copy ka EXACT width (NEGATIVE = daayen se daayen) */
+        track.style.setProperty("--tkShift", "-" + one + "px");
+      });
+    }
+
     const base = TK_SPEED[TICKER.speed] || TK_SPEED.normal;
-    /* speed ka farak lamba message me bhi bana rahe */
     const dur = Math.max(base, Math.min(90, Math.round(base * (1 + txt.length / 250))));
-    track.style.animation = `tkScroll ${dur}s linear infinite`;
+    /* animation-duration alag se — shorthand se animation reset ho jati hai */
+    if (track.style.animationName !== "tkScroll" || changed) {
+      track.style.animation = "tkScroll " + dur + "s linear infinite";
+    } else {
+      track.style.animationDuration = dur + "s";
+    }
     /* "tap" mode — user ke tap tak ruka hua */
     track.style.animationPlayState = (mode === "tap") ? "paused" : "running";
   }
@@ -1977,6 +2031,10 @@ function init() {
 
   // open shop card
   $("#shopList").onclick = e => {
+    /* card ke andar ke buttons alag se handle karo */
+    const vw = e.target.closest("[data-view]");
+    if (vw) { e.stopPropagation(); return openShop(vw.getAttribute("data-view")); }
+    if (e.target.closest("[data-stop]")) return;      // WhatsApp / Call link
     const card = e.target.closest(".shop"); if (!card) return;
     openShop(card.dataset.id);
   };

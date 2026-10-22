@@ -305,11 +305,12 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:1
 .tk-view{flex:1;min-width:0;overflow:hidden;white-space:nowrap;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
           mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent)}
-.tk-track{display:inline-block;will-change:transform;
-  animation:tkScroll 22s linear infinite;padding-left:100%}
+.tk-track{display:inline-flex;will-change:transform;
+  animation:tkScroll 22s linear infinite}
 .ticker:hover .tk-track{animation-play-state:paused}
-@keyframes tkScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.tk-item{padding-right:44px;font-size:12.5px;font-weight:600;letter-spacing:.1px}
+/* ek copy ka exact width shift — loop bilkul seamless */
+@keyframes tkScroll{0%{transform:translateX(0)}100%{transform:translateX(var(--tkShift,-50%))}}
+.tk-item{padding-right:44px;font-size:12.5px;font-weight:600;letter-spacing:.1px;white-space:nowrap}
 
 /* ---------- 📲 INSTALL HELP PANEL ---------- */
 .help-sheet{

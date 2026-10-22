@@ -8,10 +8,11 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="style.css?v71">
+<link rel="stylesheet" href="style.css?v76">
+<link rel="stylesheet" href="design.css?v76">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v71"></script>
+<script src="firebase-config.js?v76"></script>
 </head>
 <body>
 
@@ -50,8 +51,17 @@
 
   <!-- ===== 📢 LIVE SCROLLING ANNOUNCEMENT (latest update) ===== -->
   <div class="ticker" id="ticker" hidden>
-    <span class="tk-badge">📢</span>
+    <span class="tk-live">LIVE</span>
     <div class="tk-view"><div class="tk-track" id="tkTrack"></div></div>
+  </div>
+
+  <!-- ===== 🏡 HERO WELCOME ===== -->
+  <div class="hero-welcome">
+    <div class="hw-ic">🏡</div>
+    <div>
+      <b>आपली कॉलनी, आपलं डिजिटल कुटुंब</b>
+      <span>कॉलनीतील व्यवसाय, सेवा आणि महत्त्वाचे संपर्क एका ठिकाणी</span>
+    </div>
   </div>
 
   <!-- ===== INSTALL HELP (browser ke hisaab se steps) ===== -->
@@ -64,7 +74,8 @@
   </div>
 
   <div class="search-wrap">
-    <input type="search" id="search" placeholder="🔍 Business ya kaam dhundho…" autocomplete="off">
+    <span class="sw-ic">🔍</span>
+    <input type="search" id="search" placeholder="व्यवसाय, सेवा किंवा काम शोधा..." autocomplete="off">
   </div>
   <div class="chips" id="catChips"></div>
   <div class="sync-sheet" id="syncSheet" hidden>
@@ -86,7 +97,7 @@
 
   <div class="listhead"><span id="shopCount">0 Business</span></div>
   <div id="shopList" class="grid"></div>
-  <p class="empty" id="homeEmpty">Abhi koi business nahi. Admin tab se pehla business add karo.</p>
+  <p class="empty" id="homeEmpty">अद्याप कोणतेही व्यवसाय नाहीत. Admin tab मधून पहिला व्यवसाय जोडा.</p>
 </main>
 
 <!-- ================= EMERGENCY ================= -->
@@ -106,7 +117,7 @@
 <!-- ================= UPDATES ================= -->
 <main id="page-updates" class="page">
   <div id="updateList" class="feed"></div>
-  <p class="empty" id="updatesEmpty">Koi update nahi abhi.</p>
+  <p class="empty" id="updatesEmpty">अद्याप कोणतेही अपडेट नाहीत.</p>
 </main>
 
 <!-- ================= ADMIN ================= -->
@@ -355,6 +366,6 @@
 
 <div id="toast" class="toast"></div>
 
-<script src="app.js?v71"></script>
+<script src="app.js?v76"></script>
 </body>
 </html>

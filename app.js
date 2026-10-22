@@ -154,7 +154,7 @@ function sync() {
       saveLocal();          // offline copy
       render();
       if (k === "emergency") { renderEmAdmin(); renderQuickAdd(); }
-      if (k === "app") applyLogo();
+      if (k === "app") { applyLogo(); renderTicker(); }
     }, onErr);
   });
 
@@ -306,10 +306,11 @@ function codeNum(s) {
   return m ? parseInt(m[1], 10) : null;
 }
 
-/* har code ko ek hi format me laao — GC-001 */
+/* har code ko ek hi format me laao — GC-01, GC-07, GC-39, GC-47 */
 function normCode(c) {
   const m = String(c || "").match(/(\d+)/);
-  return m ? "GC-" + String(parseInt(m[1], 10)).padStart(3, "0") : String(c || "").trim();
+  if (!m) return String(c || "").trim();
+  return "GC-" + String(parseInt(m[1], 10)).padStart(2, "0");
 }
 
 /* agla apne aap number — GC-001, GC-002 ... */
@@ -318,7 +319,7 @@ function nextCode() {
     .map(s => codeNum(s))
     .filter(n => n !== null);
   const n = (used.length ? Math.max(...used) : 0) + 1;
-  return "GC-" + String(n).padStart(3, "0");
+  return "GC-" + String(n).padStart(2, "0");
 }
 
 /* ============================================================
@@ -370,8 +371,14 @@ const CAT_FIX = {
   "saree collection": "Cloth / Saree / Garments", "saree and fashion": "Cloth / Saree / Garments",
   "saree & dress": "Cloth / Saree / Garments", "saree boutique": "Cloth / Saree / Garments",
   "saree and fashion collection": "Cloth / Saree / Garments",
-  "dress": "Cloth / Saree / Garments", "dress shop": "Cloth / Saree / Garments",
   "suit": "Cloth / Saree / Garments", "kurti": "Cloth / Saree / Garments",
+  "woollen": "Cloth / Saree / Garments", "woolen": "Cloth / Saree / Garments",
+  "woollen": "Cloth / Saree / Garments",
+
+  /* dresses — apni alag category */
+  "dresses": "Dresses", "dress": "Dresses", "dress shop": "Dresses",
+  "dress and bakery": "Dresses", "ladies dress": "Dresses",
+  "frock": "Dresses", "frock and dress": "Dresses",
 
   "coaching": "Coaching", "coaching classes": "Coaching",
   "classes": "Coaching", "tuition": "Coaching", "coaching class": "Coaching",
@@ -399,8 +406,45 @@ const CAT_FIX = {
   "cakes": "Bakery / Cake", "pastry": "Bakery / Cake",
 
   "rangoli": "Rangoli", "rangoli and pipe cleaner": "Rangoli",
-  "household": "Household", "house keeping": "Household"
+
+  /* नई categories — 45 shops के हिसाब से */
+  "tiffin": "Tiffin / Mess", "mess": "Tiffin / Mess",
+  "tiffin service": "Tiffin / Mess", "tiffin and mess": "Tiffin / Mess",
+  "catering": "Tiffin / Mess", "tiffin / mess": "Tiffin / Mess",
+  "sanitary pad": "Personal Care", "shampoo": "Personal Care",
+  "personal care": "Personal Care", "soap": "Personal Care",
+
+  "life insurance": "Insurance", "lic mutual fund": "Insurance",
+  "mutual fund": "Insurance", "insurance": "Insurance",
+  "lic": "Insurance", "lic mutual": "Insurance",
+
+  /* NOTE: "Kruvi Aari work" aur "Crochet_Cuddle_Story" ko APNI ALAG
+     category me rakhna hai — isliye yahan koi mapping nahi */
+
+  "chaat": "Food / Snacks", "snacks": "Food / Snacks",
+  "food": "Food / Snacks", "fast food": "Food / Snacks",
+  "sweet dish": "Bakery / Cake", "sweets": "Bakery / Cake",
+
+  "digital": "Digital Media", "digital media": "Digital Media",
+  "photo studio": "Digital Media", "photography": "Digital Media",
+
+  "cosmetic": "Saloon / Beauty", "cosmetics": "Saloon / Beauty",
+  "make up": "Saloon / Beauty", "makeup": "Saloon / Beauty",
+  "makeup artist": "Saloon / Beauty", "make up artist": "Saloon / Beauty"
 };
+
+/* ============================================================
+   KNOWN CATEGORIES  —  jinhe slash se alag karke split kar sakte hain
+   "Bakery /dresses" → Bakery + Dresses (dono alag)
+   "Cloth / Garments" → ek hi (dono ek hi category)
+   ============================================================ */
+const KNOWN_CATS = new Set([
+  "Baby Sitting", "Ladies Tailor", "Saloon / Beauty", "Jewellery",
+  "Groceries & Dairy", "Cloth / Saree / Garments", "Dresses",
+  "Coaching", "Drawing / Sketching", "Chadar / Bed Linen", "Atta Chakki",
+  "Masale", "Bakery / Cake", "Rangoli", "Tiffin / Mess", "Personal Care",
+  "Insurance", "Food / Snacks", "Digital Media"
+]);
 
 function catKey(c) {
   return String(c || "").trim().toLowerCase()
@@ -432,11 +476,28 @@ function sameCat(a, b) {
 }
 
 /* ek shop ek se zyada category me ho sakti hai —
-   "Cloth / Garments, Jewellery"  →  dono chips me dikhega */
+   "Cloth / Garments, Jewellery"  →  dono chips me dikhega
+   "Bakery /dresses"              →  Bakery + Dresses (dono alag)
+   "Cloth / Garments"             →  ek hi (dono ek hi category) */
 function catList(c) {
-  const out = String(c || "").split(",")
-    .map(x => canonCat(x))
-    .filter(Boolean);
+  const out = [];
+  String(c || "").split(",").forEach(part => {
+    const p = part.trim();
+    if (!p) return;
+
+    /* slash se parts — par sirf tab split karo jab dono parts
+       JAANU-HUA alag-alag categories hon */
+    const bits = p.split("/").map(x => x.trim()).filter(Boolean);
+    if (bits.length > 1) {
+      const mapped = bits.map(b => canonCat(b));
+      const alag = new Set(mapped);
+      if (mapped.every(m => KNOWN_CATS.has(m)) && alag.size > 1) {
+        mapped.forEach(m => out.push(m));
+        return;
+      }
+    }
+    out.push(canonCat(p));
+  });
   return [...new Set(out)];
 }
 
@@ -447,9 +508,9 @@ async function fixAllCodes() {
   const used = new Set();
   let n = 0, changed = 0;
   for (const s of list) {
-    while (used.has("GC-" + String(n + 1).padStart(3, "0"))) n++;
+    while (used.has("GC-" + String(n + 1).padStart(2, "0"))) n++;
     n++;
-    const want = "GC-" + String(n).padStart(3, "0");
+    const want = "GC-" + String(n).padStart(2, "0");
     used.add(want);
     if (String(s.code || "").trim() !== want) {
       if (FB_DB) await FB_DB.ref("shops/" + s.id + "/code").set(want).catch(() => {});
@@ -735,7 +796,39 @@ function renderUpdates() {
   }).join("");
 }
 
-function render() { renderChips(); renderShops(); renderUpdates(); renderEmergency(); renderUnread(); }
+function render() { renderChips(); renderShops(); renderUpdates(); renderEmergency(); renderUnread(); renderTicker(); }
+
+/* ============================================================
+   📤 SHARE BUSINESS  —  naam + number WhatsApp par bhejo
+   ============================================================ */
+function shareBusiness(id) {
+  const s = (DATA.shops || {})[id];
+  if (!s) return toast("Business nahi mila");
+
+  const wa  = waNumber(s);
+  const num = wa || s.phone || "";
+  const lines = [
+    "🏪 " + (s.name || "Business"),
+    num ? "📞 " + num : "",
+    s.addr ? "📍 " + s.addr : "",
+    s.time ? "🕐 " + s.time : "",
+    "",
+    "📲 Colony Mitra App मध्ये हे Business:",
+    location.origin + "/"
+  ].filter(Boolean);
+
+  const text = lines.join("\n");
+  const title = s.name || "Colony Mitra Business";
+
+  /* 1) Native share menu — WhatsApp, SMS, copy sab */
+  if (navigator.share) {
+    navigator.share({ title, text }).catch(() => {});
+    return;
+  }
+
+  /* 2) Fallback — WhatsApp khud kholo */
+  window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
+}
 
 /* ============================================================
    SHOP DETAIL MODAL
@@ -774,7 +867,7 @@ function openShop(id) {
     <div class="acts">
       ${waLink ? `<a class="act act-wa" href="${waLink}" target="_blank" rel="noopener">💬 WhatsApp</a>` : ""}
       ${tel ? `<a class="act act-call" href="tel:+${tel}">📞 Call</a>` : ""}
-      ${waLink ? `<a class="act act-msg" href="https://wa.me/${wa}" target="_blank" rel="noopener">💬 Chat only</a>` : ""}
+      <button class="act act-share" data-share-shop="${s.id}">📤 Share</button>
       ${unlocked ? `<button class="act act-edit" data-edit="${s.id}">✏️ Edit</button>` : ""}
       ${unlocked ? `<button class="act act-del" data-del-shop="${s.id}">🗑️ Delete</button>` : ""}
     </div>
@@ -1615,6 +1708,82 @@ async function delShop(id) {
 }
 
 /* ============================================================
+   📢 LIVE SCROLLING ANNOUNCEMENT  —  home screen par
+   Admin jo update add karega, wahi yahan scroll hoga.
+   Sirf admin hi badal sakta hai (Firebase rules).
+   ============================================================ */
+const TK_DEF = { mode: "scroll", speed: "normal", show: "always" };
+let TICKER = { ...TK_DEF };
+
+function loadTickerSettings() {
+  /* Firebase se (sabko same) — warna phone se */
+  const t = (DATA.app && DATA.app.ticker) || null;
+  if (t && typeof t === "object") { TICKER = { ...TK_DEF, ...t }; return; }
+  try {
+    const s = localStorage.getItem("cm_ticker");
+    if (s) TICKER = { ...TK_DEF, ...JSON.parse(s) };
+  } catch (e) { /* ignore */ }
+}
+
+const TK_SPEED = { slow: 42, normal: 22, fast: 11 };
+
+function renderTicker() {
+  const box = $("#ticker");
+  const track = $("#tkTrack");
+  if (!box || !track) return;
+
+  loadTickerSettings();
+
+  if (TICKER.show === "off") { box.hidden = true; return; }
+
+  const list = Object.entries(DATA.updates || {})
+    .map(([id, u]) => Object.assign({ id }, u))
+    .sort((a, b) => (b.ts || 0) - (a.ts || 0));
+
+  if (!list.length) { box.hidden = true; return; }
+
+  const u = list[0];
+  const txt = String(u.text || "").replace(/\s+/g, " ").trim();
+  if (!txt) { box.hidden = true; return; }
+
+  /* "नया आल्यावर" mode — sirf unread update par dikhao */
+  if (TICKER.show === "new" && (u.ts || 0) <= lastSeen()) { box.hidden = true; return; }
+
+  const mode = TICKER.mode || "scroll";
+
+  /* lamba message — ticker me chhota dikhao, pura message Updates tab me */
+  const short = txt.length > 140 ? txt.slice(0, 140).trim() + "…" : txt;
+
+  track.innerHTML = (mode === "static")
+    ? `<span class="tk-item">${esc(short)}</span>`
+    : `<span class="tk-item">${esc(short)}</span><span class="tk-item">${esc(short)}</span>`;
+
+  if (mode === "static") {
+    track.style.animation = "none";
+  } else {
+    const base = TK_SPEED[TICKER.speed] || TK_SPEED.normal;
+    /* speed ka farak lamba message me bhi bana rahe */
+    const dur = Math.max(base, Math.min(150, Math.round(base * (1 + txt.length / 120))));
+    track.style.animation = `tkScroll ${dur}s linear infinite`;
+    /* "tap" mode — user ke tap tak ruka hua */
+    track.style.animationPlayState = (mode === "tap") ? "paused" : "running";
+  }
+
+  box.hidden = false;
+  box.dataset.mode = mode;
+}
+
+function renderTkStatus() {
+  const el = $("#tkStatus");
+  if (!el) return;
+  const m = { scroll: "Scroll होता रहेगा", tap: "Tap करने पर ही चलेगा", static: "स्थिर रहेगा" };
+  const s = { slow: "धीमी", normal: "ठीक", fast: "तेज़" };
+  const w = { always: "हमेशा दिखेगा", new: "नया update आने पर ही", off: "बंद है" };
+  el.innerHTML = "अभी: <b>" + (m[TICKER.mode] || m.scroll) + "</b> · " +
+    "<b>" + (s[TICKER.speed] || s.normal) + "</b> speed · <b>" + (w[TICKER.show] || w.always) + "</b>";
+}
+
+/* ============================================================
    CLOUD INFO  —  badge par tap karo to pata chale data kahan hai
    ============================================================ */
 let LAST_SYNC = Number(localStorage.getItem("cm_last_sync")) || 0;
@@ -1826,6 +1995,13 @@ function init() {
       return delPhotoAt(+pd.dataset.pdel, true);
     }
 
+    /* business share — WhatsApp par naam + number bhejo */
+    const shp = e.target.closest("[data-share-shop]");
+    if (shp) {
+      e.stopPropagation();
+      return shareBusiness(shp.dataset.shareShop);
+    }
+
     /* business delete — admin only */
     const ds = e.target.closest("[data-del-shop]");
     if (ds) {
@@ -2004,6 +2180,61 @@ function init() {
   const dab = $("#delAllPhotos");
   if (dab) dab.onclick = delAllPhotos;
 
+  // ---- announcement bar settings (admin only) ----
+  const tkSave = $("#tkSave");
+  const tkPrev = $("#tkPreview");
+  const segs = { mode: "#tkMode", speed: "#tkSpeed", show: "#tkShow" };
+
+  const readSeg = sel => {
+    const b = document.querySelector(sel + " button.on");
+    return b ? b.getAttribute("data-v") : null;
+  };
+  const paintSeg = (sel, val) => {
+    document.querySelectorAll(sel + " button").forEach(b =>
+      b.classList.toggle("on", b.getAttribute("data-v") === val));
+  };
+
+  if (tkSave) {
+    loadTickerSettings();
+    Object.keys(segs).forEach(k => paintSeg(segs[k], TICKER[k]));
+
+    Object.keys(segs).forEach(k => {
+      const box = document.querySelector(segs[k]);
+      if (!box) return;
+      box.onclick = e => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        paintSeg(segs[k], b.getAttribute("data-v"));
+        TICKER[k] = b.getAttribute("data-v");
+        renderTicker();
+        renderTkStatus();
+      };
+    });
+
+    tkSave.onclick = () => {
+      if (!unlocked) return toast("🔒 Pehle admin login karo");
+      const cfg = {
+        mode:  readSeg(segs.mode)  || TK_DEF.mode,
+        speed: readSeg(segs.speed) || TK_DEF.speed,
+        show:  readSeg(segs.show)  || TK_DEF.show
+      };
+      TICKER = cfg;
+      try { localStorage.setItem("cm_ticker", JSON.stringify(cfg)); } catch (e) {}
+      write("app/ticker", cfg);
+      renderTicker();
+      renderTkStatus();
+      toast("💾 Save ho gaya — sabke phone par lagega");
+    };
+  }
+
+  if (tkPrev) tkPrev.onclick = () => {
+    switchTab("home");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    renderTicker();
+  };
+
+  renderTkStatus();
+
   // shop codes theek karo (admin only)
   $("#fixCodes").onclick = () => {
     if (!unlocked) return toast("🔒 Pehle admin login karo");
@@ -2057,6 +2288,10 @@ function init() {
 
   // cloud badge par tap -> data kahan hai, kitna hai, refresh + backup
   $("#syncBadge").onclick = showSyncSheet;
+
+  // announcement bar par tap -> Updates tab
+  const tk = $("#ticker");
+  if (tk) tk.onclick = () => { switchTab("updates"); markUpdatesSeen(); };
 
   // category quick-pick — spelling galti na ho
   const cpb = $("#catPick");

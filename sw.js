@@ -4,14 +4,14 @@
    • index.html             → NETWORK FIRST (fresh rahe)
    • firebase-config.js     → STALE + revalidate
    ============================================================ */
-const VERSION = "v65";
+const VERSION = "v70";
 const CACHE_STATIC = "cm-static-" + VERSION;
 const CACHE_PAGES  = "cm-pages-"  + VERSION;
 
 const STATIC = [
   "./index.html",
-  "./style.css?v64",
-  "./app.js?v64",
+  "./style.css?v69",
+  "./app.js?v69",
   "./manifest.json",
   "./icons/icon-192.png",
   "./icons/icon-512.png"

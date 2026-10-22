@@ -277,6 +277,40 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:1
 .dbtn.get{background:var(--pri);color:#fff}
 .dbtn:active{opacity:.75}
 
+/* ---------- 🎛 SEGMENTED BUTTONS (settings) ---------- */
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+.seg button{
+  flex:1;min-width:96px;
+  border:1.5px solid var(--line);background:var(--card);color:var(--txt);
+  border-radius:10px;padding:9px 8px;font-size:12.5px;font-weight:700;cursor:pointer;
+}
+.seg button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.seg button:active{transform:scale(.96)}
+
+/* ---------- 📢 LIVE SCROLLING ANNOUNCEMENT ---------- */
+.ticker{
+  display:flex;align-items:center;gap:8px;
+  background:linear-gradient(90deg,#0f766e,#14b8a6);
+  color:#fff;border-radius:10px;padding:7px 11px;margin-bottom:11px;
+  box-shadow:0 2px 8px rgba(15,118,110,.24);
+  overflow:hidden;cursor:pointer;
+}
+.ticker[hidden]{display:none}
+.ticker:active{transform:scale(.99)}
+.tk-badge{
+  flex-shrink:0;font-size:14px;line-height:1;
+  animation:tkPulse 2s ease-in-out infinite;
+}
+@keyframes tkPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tk-view{flex:1;min-width:0;overflow:hidden;white-space:nowrap;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent)}
+.tk-track{display:inline-block;will-change:transform;
+  animation:tkScroll 22s linear infinite;padding-left:100%}
+.ticker:hover .tk-track{animation-play-state:paused}
+@keyframes tkScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tk-item{padding-right:44px;font-size:12.5px;font-weight:600;letter-spacing:.1px}
+
 /* ---------- 📲 INSTALL HELP PANEL ---------- */
 .help-sheet{
   position:fixed;left:0;right:0;bottom:0;z-index:70;
@@ -583,6 +617,8 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:1
 .act-edit{background:var(--bg);color:var(--txt)}
 .act-del{background:#fef2f2;color:#b91c1c;border:1.5px solid #fecaca}
 .act-del:active{background:#fee2e2}
+.act-share{background:#e0f2fe;color:#0369a1;border:1.5px solid #bae6fd}
+.act-share:active{background:#dbeafe}
 .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}
 .gallery img{
   width:100%;aspect-ratio:1;object-fit:contain;border-radius:10px;

@@ -1712,7 +1712,7 @@ async function delShop(id) {
    Admin jo update add karega, wahi yahan scroll hoga.
    Sirf admin hi badal sakta hai (Firebase rules).
    ============================================================ */
-const TK_DEF = { mode: "scroll", speed: "normal", show: "always" };
+const TK_DEF = { mode: "scroll", speed: "fast", show: "always" };
 let TICKER = { ...TK_DEF };
 
 function loadTickerSettings() {
@@ -1725,7 +1725,7 @@ function loadTickerSettings() {
   } catch (e) { /* ignore */ }
 }
 
-const TK_SPEED = { slow: 42, normal: 22, fast: 11 };
+const TK_SPEED = { slow: 26, normal: 12, fast: 6 };
 
 function renderTicker() {
   const box = $("#ticker");
@@ -1763,7 +1763,7 @@ function renderTicker() {
   } else {
     const base = TK_SPEED[TICKER.speed] || TK_SPEED.normal;
     /* speed ka farak lamba message me bhi bana rahe */
-    const dur = Math.max(base, Math.min(150, Math.round(base * (1 + txt.length / 120))));
+    const dur = Math.max(base, Math.min(90, Math.round(base * (1 + txt.length / 250))));
     track.style.animation = `tkScroll ${dur}s linear infinite`;
     /* "tap" mode — user ke tap tak ruka hua */
     track.style.animationPlayState = (mode === "tap") ? "paused" : "running";
